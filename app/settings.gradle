@@ -1,0 +1,2 @@
+include ':AlgoDS'
+project(':AlgoDS').projectDir = new File(settingsDir, '../libs/AlgoDS/')
