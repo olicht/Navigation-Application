@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/i1"
+        android:orderInCategory="100"
+        android:title="מגדל אשכול" />
+
+    <item
+        android:id="@+id/i2"
+        android:orderInCategory="100"
+        android:title="בניין חינוך" />
+
+    <item
+        android:id="@+id/i3"
+        android:orderInCategory="100"
+        android:title="בניין ג'ייקובס" />
+
+    <item
+        android:id="@+id/i4"
+        android:orderInCategory="100"
+        android:title="בניין רבין" />
+
+    <item
+        android:id="@+id/i5"
+        android:orderInCategory="100"
+        android:title="בניין המדרגה" />
+
+    <item
+        android:id="@+id/i6"
+        android:orderInCategory="100"
+        android:title="בניין רב תכליתי" />
+
+    <item
+        android:id="@+id/i7"
+        android:orderInCategory="100"
+        android:title="מוזיאון הכט" />
+
+    <item
+        android:id="@+id/i8"
+        android:orderInCategory="100"
+        android:title="מגרש חניה צפוני" />
+
+    <item
+        android:id="@+id/i9"
+        android:orderInCategory="100"
+        android:title="ארומה" />
+
+    <item
+        android:id="@+id/i10"
+        android:orderInCategory="100"
+        android:title="אקדמון" />
+
+    <item
+        android:id="@+id/i11"
+        android:orderInCategory="100"
+        android:title="גרג" />
+
+    <item
+        android:id="@+id/i12"
+        android:orderInCategory="100"
+        android:title="מתחם מזון" />
+
+    <item
+        android:id="@+id/i13"
+        android:orderInCategory="100"
+        android:title="בית הסטודנט" />
+
+    <item
+        android:id="@+id/i14"
+        android:orderInCategory="100"
+        android:title="קפה אגודה" />
+
+    <item
+        android:id="@+id/i15"
+        android:orderInCategory="100"
+        android:title="ספריה" />
+
+    <item
+        android:id="@+id/i16"
+        android:orderInCategory="100"
+        android:title="HAIAS" />
+
+    <item
+        android:id="@+id/i17"
+        android:orderInCategory="100"
+        android:title="מעונות" />
+
+    <item
+        android:id="@+id/i18"
+        android:orderInCategory="100"
+        android:title="חדר כושר" />
+
+    <item
+        android:id="@+id/i19"
+        android:orderInCategory="100"
+        android:title="מגרש טניס" />
+
+    <item
+        android:id="@+id/i20"
+        android:orderInCategory="100"
+        android:title="דשא" />
+
+    <item
+        android:id="@+id/i21"
+        android:orderInCategory="100"
+        android:title="גשר לחניות" />
+
+    <item
+        android:id="@+id/i22"
+        android:orderInCategory="100"
+        android:title="כניסה צפונית" />
+
+    <item
+        android:id="@+id/i23"
+        android:orderInCategory="100"
+        android:title="פלפלת" />
+
+    <item
+        android:id="@+id/i24"
+        android:orderInCategory="100"
+        android:title="שדרת החנויות" />
+
+    <item
+        android:id="@+id/i25"
+        android:orderInCategory="100"
+        android:title="מגרש חניה - בניין חינוך" />
+
+    <item
+        android:id="@+id/i26"
+        android:orderInCategory="100"
+        android:title="מגרש חניות - מגדל אשכול" />
+</menu>
