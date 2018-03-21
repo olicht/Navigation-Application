@@ -1,7 +1,12 @@
 package temp.navigationapplication;
 
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.PopupMenu;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -12,18 +17,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.internal.Primitives;
-import com.google.gson.reflect.TypeToken;
-import android.content.res.Resources;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 
 import AlgoDS.ds.graph.Edge;
@@ -31,7 +32,7 @@ import AlgoDS.ds.graph.LocationEdge;
 import AlgoDS.ds.graph.LocationWeightedGraph;
 import AlgoDS.ds.graph.WeightedGraph;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
     private GoogleMap mMap;
 
@@ -43,6 +44,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        Button menu = (Button) findViewById(R.id.start);
+        menu.setOnClickListener(this);
     }
 
 
@@ -128,6 +131,26 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         LatLng start = new LatLng(src.getLatitude(), src.getLongitude());
         mMap.addMarker(new MarkerOptions().position(start).title("You are here"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(start));
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
+    }
 
+    public void showMenu(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.setOnMenuItemClickListener(this);// to implement on click event on items of menu
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.options_menu, popup.getMenu());
+        popup.show();
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        showMenu(v);
+
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        return false;
     }
 }
