@@ -52,6 +52,8 @@ public class WeightedGraph<VT> {
         return new HashSet<>(map.keySet());
     }
 
+    public boolean getUndirected() {return this.Undirected; }
+
     public Set<Edge<VT>> getVertexNeighbors(VT v) {
         return map.get(v);
     }
