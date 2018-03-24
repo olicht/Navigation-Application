@@ -30,6 +30,7 @@ public class WeightedGraph<VT> {
     public void addEdge(VT v1, VT v2, Double weight, boolean accessible) {
         this.addEdge(new Edge<>(v1, v2, weight, accessible));
     }
+
     public void addEdge(Edge<VT> edge) {
         if (!map.containsKey(edge.getFrom())) return;
         if (!map.containsKey(edge.getTo())) return;
@@ -48,8 +49,8 @@ public class WeightedGraph<VT> {
 
     }
 
-    public Set<VT> getVertices() {
-        return new HashSet<>(map.keySet());
+    public Map<VT, Set<Edge<VT>>> getVertices() { //Including "neighbors list"
+        return map;
     }
 
     public boolean getUndirected() {return this.Undirected; }
@@ -69,4 +70,5 @@ public class WeightedGraph<VT> {
     public int size() {
         return map.size();
     }
+
 }

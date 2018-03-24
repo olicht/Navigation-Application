@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.Set;
-import java.util.TreeSet;
 
 import AlgoDS.ds.graph.Edge;
 import AlgoDS.ds.graph.WeightedGraph;
@@ -86,7 +84,7 @@ public class Dijkstra<VT> {
     public void shortestPathOptimized(VT source, Boolean accessible) {
         PriorityQueue<Three> queue = new PriorityQueue<>();
         HashMap<VT, Three> map = new HashMap<>();
-        for (VT vertex : graph.getVertices()) {
+        for (VT vertex : graph.getVertices().keySet()) {
             Three three;
             if (source.equals(vertex)) three = new Three(vertex, 0d, null);
             else three = new Three(vertex, Double.POSITIVE_INFINITY, null);

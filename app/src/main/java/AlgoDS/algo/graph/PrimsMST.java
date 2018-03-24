@@ -57,7 +57,7 @@ public class PrimsMST<VT> {
     private VT getRandomVertex() {
 
         if (graph.getVertices().size() > 0)
-            return graph.getVertices().iterator().next();
+            return graph.getVertices().keySet().iterator().next();
 
         return null;
     }

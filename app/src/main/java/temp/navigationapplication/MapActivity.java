@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentActivity;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.PopupMenu;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -19,10 +18,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.internal.Primitives;
 
 import java.io.BufferedReader;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -44,8 +43,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        Button menu = (Button) findViewById(R.id.start);
-        menu.setOnClickListener(this);
+//        Button menu = findViewById(R.id.start);
+//        menu.setOnClickListener(this);
     }
 
 
@@ -92,18 +91,27 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         }
         locGraph.setEdges(locSet);
 
-        Map<LocationDataPoint, Set<LocationEdge>> locMap;
-        Set<LocationDataPoint> set = graph.getVertices();
+        Map<LocationDataPoint, Set<LocationEdge>> locMap = new HashMap<>();
+        Map<LocationDataPoint, Set<Edge<LocationDataPoint>>> map = graph.getVertices();
 
+        for (LocationDataPoint loc : map.keySet()) {
+            Set<LocationEdge> verSet = new HashSet<>();
+            for (Edge<LocationDataPoint> edge : map.get(loc)) {
+                verSet.add(EdgeToLocationEdge((edge)));
+            }
+            locMap.put(loc, verSet);
+        }
 
+        return locGraph;
 
     }
 
     public static LocationEdge EdgeToLocationEdge(Edge<LocationDataPoint> edge)
     {
-        LocationEdge locEdge = new LocationEdge(edge.getFrom(), edge.getTo(), edge.getWeight());
+        LocationEdge locEdge = new LocationEdge((LocationDataPoint) edge.getFrom(), (LocationDataPoint) edge.getTo(), edge.getWeight());
         return locEdge;
     }
+    
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -127,7 +135,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 //a        LocationWeightedGraph TestGraph = gson.fromJson(json, new TypeToken<LocationWeightedGraph>(){}.getType());
         // Add a marker in Sydney and move the camera
 
-        LocationDataPoint src = (LocationDataPoint) TestGraph.getVertices().toArray()[0];
+        LocationWeightedGraph locGraph = WeightedGraphToLocationGraph(TestGraph);
+        LocationDataPoint src = (LocationDataPoint) locGraph.getVertices().toArray()[0];
         LatLng start = new LatLng(src.getLatitude(), src.getLongitude());
         mMap.addMarker(new MarkerOptions().position(start).title("You are here"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(start));

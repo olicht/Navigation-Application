@@ -13,13 +13,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.util.Scanner;
 
@@ -79,7 +76,7 @@ public class MainActivity extends AppCompatActivity
 
             Dijkstra<LocationDataPoint> dijkstra = new Dijkstra<>(TestGraph);
             Vertex<LocationDataPoint> a = new Vertex<>();
-            LocationDataPoint src = (LocationDataPoint)TestGraph.getVertices().toArray()[0];
+            LocationDataPoint src = (LocationDataPoint) TestGraph.getVertices().keySet().toArray()[0];
             dijkstra.shortestPathOptimized(src, true);
 //            StringBuilder output = new StringBuilder();
 //            for(int i = 1; i < 7; i++)
