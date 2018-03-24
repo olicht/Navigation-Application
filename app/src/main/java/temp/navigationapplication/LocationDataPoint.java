@@ -15,6 +15,12 @@ public class LocationDataPoint implements Serializable, Comparable<LocationDataP
     private long time;
 
 
+    public LocationDataPoint(double longitude, double latitude, boolean accessible) {
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.accessible = accessible;
+    }
+
     public double getLongitude() {
         return longitude;
     }

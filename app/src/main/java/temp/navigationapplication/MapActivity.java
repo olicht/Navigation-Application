@@ -43,7 +43,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-//        Button menu = findViewById(R.id.start);
+//        Button menu = (Button)findViewById(R.id.start);
 //        menu.setOnClickListener(this);
     }
 
@@ -64,7 +64,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         String jsonElementString;
         com.google.gson.JsonParser parser = new com.google.gson.JsonParser();
         StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader bufferedReader =  new BufferedReader(new InputStreamReader(inputStream));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         while ((jsonElementString = bufferedReader.readLine()) != null) {
             stringBuilder.append(jsonElementString);
         }
@@ -81,12 +81,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         return Primitives.wrap(classOfT).cast(object);
     }
 
-    public static LocationWeightedGraph WeightedGraphToLocationGraph(WeightedGraph<LocationDataPoint> graph)
-    {
+    public static LocationWeightedGraph WeightedGraphToLocationGraph(WeightedGraph<LocationDataPoint> graph) {
         LocationWeightedGraph locGraph = new LocationWeightedGraph(graph.getUndirected());
         Set<Edge<LocationDataPoint>> edges = graph.getEdges();
         Set<LocationEdge> locSet = new HashSet<>();
-        for (Edge<LocationDataPoint> edge: edges) {
+        for (Edge<LocationDataPoint> edge : edges) {
             locSet.add(EdgeToLocationEdge(edge));
         }
         locGraph.setEdges(locSet);
@@ -106,12 +105,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
-    public static LocationEdge EdgeToLocationEdge(Edge<LocationDataPoint> edge)
-    {
+    public static LocationEdge EdgeToLocationEdge(Edge<LocationDataPoint> edge) {
         LocationEdge locEdge = new LocationEdge((LocationDataPoint) edge.getFrom(), (LocationDataPoint) edge.getTo(), edge.getWeight());
         return locEdge;
     }
-    
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -122,12 +120,17 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         try {
             graphElement = fileToJsonElement(getResources().openRawResource(R.raw.graph));
             assert graphElement != null;
-            TestGraph = (WeightedGraph)jsonToObject(graphElement, WeightedGraph.class);
+            TestGraph = (WeightedGraph) jsonToObject(graphElement, WeightedGraph.class);
         } catch (IOException e) {
             e.printStackTrace();
             return;
         }
 
+        Set<Edge<LocationDataPoint>> set = TestGraph.getEdges();
+        Edge<LocationDataPoint> e = (Edge<LocationDataPoint>) set.toArray()[0];
+
+        Map<LocationDataPoint, Set<Edge<LocationDataPoint>>> ver = TestGraph.getVertices();
+//        String loctest=ver.keySet().toArray()[0];
 //        Gson gson = new Gson();
 //        InputStream is = getResources().openRawResource(R.raw.graph);
 //        String json = (new Scanner(is)).useDelimiter("\\Z").next();
@@ -135,7 +138,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 //a        LocationWeightedGraph TestGraph = gson.fromJson(json, new TypeToken<LocationWeightedGraph>(){}.getType());
         // Add a marker in Sydney and move the camera
 
-        LocationWeightedGraph locGraph = WeightedGraphToLocationGraph(TestGraph);
+        LocationWeightedGraph locGraph = new LocationWeightedGraph(true);
+        LocationDataPoint locationDataPoint = new LocationDataPoint(35.3, 32.6, true);
+        LocationDataPoint locationDataPoint2 = new LocationDataPoint(35.2, 32.5, true);
+        locGraph.addVertex(locationDataPoint);
+        locGraph.addVertex(locationDataPoint2);
+        locGraph.addEdge(locationDataPoint, locationDataPoint2, 5.2);
         LocationDataPoint src = (LocationDataPoint) locGraph.getVertices().toArray()[0];
         LatLng start = new LatLng(src.getLatitude(), src.getLongitude());
         mMap.addMarker(new MarkerOptions().position(start).title("You are here"));
