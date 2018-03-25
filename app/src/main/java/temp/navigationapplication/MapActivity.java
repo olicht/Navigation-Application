@@ -83,34 +83,34 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         return Primitives.wrap(classOfT).cast(object);
     }
 
-    public static LocationWeightedGraph WeightedGraphToLocationGraph(WeightedGraph<LocationDataPoint> graph) {
-        LocationWeightedGraph locGraph = new LocationWeightedGraph(graph.getUndirected());
-        Set<Edge<LocationDataPoint>> edges = graph.getEdges();
-        Set<LocationEdge> locSet = new HashSet<>();
-        for (Edge<LocationDataPoint> edge : edges) {
-            locSet.add(EdgeToLocationEdge(edge));
-        }
-        locGraph.setEdges(locSet);
+//     public static LocationWeightedGraph WeightedGraphToLocationGraph(WeightedGraph<LocationDataPoint> graph) {
+//         LocationWeightedGraph locGraph = new LocationWeightedGraph(graph.getUndirected());
+//         Set<Edge<LocationDataPoint>> edges = graph.getEdges();
+//         Set<LocationEdge> locSet = new HashSet<>();
+//         for (Edge<LocationDataPoint> edge : edges) {
+//             locSet.add(EdgeToLocationEdge(edge));
+//         }
+//         locGraph.setEdges(locSet);
 
-        Map<LocationDataPoint, Set<LocationEdge>> locMap = new HashMap<>();
-        Map<LocationDataPoint, Set<Edge<LocationDataPoint>>> map = graph.getVertices();
+//         Map<LocationDataPoint, Set<LocationEdge>> locMap = new HashMap<>();
+//         Map<LocationDataPoint, Set<Edge<LocationDataPoint>>> map = graph.getVertices();
 
-        for (LocationDataPoint loc : map.keySet()) {
-            Set<LocationEdge> verSet = new HashSet<>();
-            for (Edge<LocationDataPoint> edge : map.get(loc)) {
-                verSet.add(EdgeToLocationEdge((edge)));
-            }
-            locMap.put(loc, verSet);
-        }
+//         for (LocationDataPoint loc : map.keySet()) {
+//             Set<LocationEdge> verSet = new HashSet<>();
+//             for (Edge<LocationDataPoint> edge : map.get(loc)) {
+//                 verSet.add(EdgeToLocationEdge((edge)));
+//             }
+//             locMap.put(loc, verSet);
+//         }
 
-        return locGraph;
+//         return locGraph;
 
-    }
+//     }
 
-    public static LocationEdge EdgeToLocationEdge(Edge<LocationDataPoint> edge) {
-        LocationEdge locEdge = new LocationEdge(edge.getFrom(), edge.getTo(), edge.getWeight());
-        return locEdge;
-    }
+//     public static LocationEdge EdgeToLocationEdge(Edge<LocationDataPoint> edge) {
+//         LocationEdge locEdge = new LocationEdge(edge.getFrom(), edge.getTo(), edge.getWeight());
+//         return locEdge;
+//     }
 
     public static WeightedGraph<LocationDataPoint> toRealGraph(WeightedGraph<LocationDataPoint> graph) {
 
