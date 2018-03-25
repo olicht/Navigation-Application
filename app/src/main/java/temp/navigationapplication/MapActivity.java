@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.internal.Primitives;
 
 import java.io.BufferedReader;
@@ -110,6 +111,34 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         return locEdge;
     }
 
+    public static WeightedGraph<LocationDataPoint> toRealGraph(WeightedGraph<LocationDataPoint> graph) {
+
+        Set<Edge<LocationDataPoint>> set = graph.getEdges();
+        Set<Edge<LocationDataPoint>> realSet = new HashSet<>();
+        WeightedGraph<LocationDataPoint> realGraph = new WeightedGraph<>(graph.getUndirected());
+
+        //casting the edges
+        for (Edge<LocationDataPoint> e : set) {
+            //LocationDataPoint l=e.getFrom();
+            Object from = e.getFrom();
+            Object to = e.getTo();
+            LinkedTreeMap<String, Double> from1 = (LinkedTreeMap<String, Double>) from;
+            LinkedTreeMap<String, Double> to1 = (LinkedTreeMap<String, Double>) to;
+            Object accF = from1.get("accessible");
+            Object accT = to1.get("accessible");
+            LocationDataPoint locFrom = new LocationDataPoint(from1.get("longitude"), from1.get("latitude"), (boolean) accF);
+            LocationDataPoint locTo = new LocationDataPoint(to1.get("longitude"), to1.get("latitude"), (boolean) accT);
+            Edge<LocationDataPoint> realEdge = new Edge<LocationDataPoint>(locFrom, locTo, e.getWeight(), e.getAccessible());
+            realSet.add(realEdge);
+        }
+
+        for (Edge<LocationDataPoint> e : realSet) {
+            realGraph.addVertex(e.getFrom());
+            realGraph.addVertex(e.getTo());
+            realGraph.addEdge(e);
+        }
+        return realGraph;
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -126,11 +155,16 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             return;
         }
 
-        Set<Edge<LocationDataPoint>> set = TestGraph.getEdges();
-        Edge<LocationDataPoint> e = (Edge<LocationDataPoint>) set.toArray()[0];
-
-        Map<LocationDataPoint, Set<Edge<LocationDataPoint>>> ver = TestGraph.getVertices();
-//        String loctest=ver.keySet().toArray()[0];
+        WeightedGraph<LocationDataPoint> testGraph = toRealGraph(TestGraph);
+        // Set<Edge<LocationDataPoint>> set = toRealEdgesSet(TestGraph);
+        //LocationDataPoint l=e.getFrom();
+//        LinkedTreeMap<String, Double> ltest=(LinkedTreeMap<String, Double>)teste;
+//        LocationDataPoint testii = new LocationDataPoint(ltest.get("longitude"), ltest.get("latitude"), true);
+//
+//        Map<LocationDataPoint, Set<Edge<LocationDataPoint>>> ver = TestGraph.getVertices();
+//        Object loctest=ver.keySet().toArray()[0];
+//
+//        String test=(String)loctest;
 //        Gson gson = new Gson();
 //        InputStream is = getResources().openRawResource(R.raw.graph);
 //        String json = (new Scanner(is)).useDelimiter("\\Z").next();
