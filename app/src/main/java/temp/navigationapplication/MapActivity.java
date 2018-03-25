@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.PopupMenu;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -44,8 +45,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-//        Button menu = (Button)findViewById(R.id.start);
-//        menu.setOnClickListener(this);
+        Button menu = (Button) findViewById(R.id.start);
+        menu.setOnClickListener(this);
     }
 
 
@@ -107,7 +108,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     public static LocationEdge EdgeToLocationEdge(Edge<LocationDataPoint> edge) {
-        LocationEdge locEdge = new LocationEdge((LocationDataPoint) edge.getFrom(), (LocationDataPoint) edge.getTo(), edge.getWeight());
+        LocationEdge locEdge = new LocationEdge(edge.getFrom(), edge.getTo(), edge.getWeight());
         return locEdge;
     }
 
