@@ -1,5 +1,6 @@
 package temp.navigationapplication;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuInflater;
@@ -8,12 +9,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.PopupMenu;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.internal.LinkedTreeMap;
@@ -33,9 +36,12 @@ import AlgoDS.ds.graph.LocationEdge;
 import AlgoDS.ds.graph.LocationWeightedGraph;
 import AlgoDS.ds.graph.WeightedGraph;
 
+import com.google.android.gms.location.LocationServices;
+
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
     private GoogleMap mMap;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +53,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mapFragment.getMapAsync(this);
         Button menu = (Button) findViewById(R.id.start);
         menu.setOnClickListener(this);
-    }
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        }
 
 
     /**
@@ -142,7 +150,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap) throws SecurityException {
         mMap = googleMap;
 
         JsonElement graphElement = null;
@@ -172,18 +180,34 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 //
 //a        LocationWeightedGraph TestGraph = gson.fromJson(json, new TypeToken<LocationWeightedGraph>(){}.getType());
         // Add a marker in Sydney and move the camera
+//
+//        LocationWeightedGraph locGraph = new LocationWeightedGraph(true);
+//        LocationDataPoint locationDataPoint = new LocationDataPoint(35.3, 32.6, true);
+//        LocationDataPoint locationDataPoint2 = new LocationDataPoint(35.2, 32.5, true);
+//        locGraph.addVertex(locationDataPoint);
+//        locGraph.addVertex(locationDataPoint2);
+//        locGraph.addEdge(locationDataPoint, locationDataPoint2, 5.2);
+//        LocationDataPoint src = (LocationDataPoint) locGraph.getVertices().toArray()[0];
 
-        LocationWeightedGraph locGraph = new LocationWeightedGraph(true);
-        LocationDataPoint locationDataPoint = new LocationDataPoint(35.3, 32.6, true);
-        LocationDataPoint locationDataPoint2 = new LocationDataPoint(35.2, 32.5, true);
-        locGraph.addVertex(locationDataPoint);
-        locGraph.addVertex(locationDataPoint2);
-        locGraph.addEdge(locationDataPoint, locationDataPoint2, 5.2);
-        LocationDataPoint src = (LocationDataPoint) locGraph.getVertices().toArray()[0];
-        LatLng start = new LatLng(src.getLatitude(), src.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(start).title("You are here"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(start));
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
+        LocationDataPoint src1 = (LocationDataPoint) testGraph.getVertices().toArray()[0];
+
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        LocationDataPoint src=src1;
+                        if (location != null) {
+                            src=new LocationDataPoint(location.getLongitude(), location.getLatitude(), true);
+                            LatLng start = new LatLng(src.getLatitude(), src.getLongitude());
+
+                            mMap.addMarker(new MarkerOptions().position(start).title("You are here"));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(start));
+                            mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
+                        }
+                    }
+                });
+
     }
 
     public void showMenu(View v) {
