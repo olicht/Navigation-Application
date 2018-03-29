@@ -218,6 +218,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         popup.show();
     }
 
+
     @Override
     public void onClick(View v) {
 
