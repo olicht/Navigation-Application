@@ -44,6 +44,8 @@ public class Dijkstra<VT> {
         this.distance = distance;
     }
 
+
+
     /**
      * This is naive implementation of Dijkstra shortest path algorithm. Running time is O(VE);
      * this implementation works best with dense graphs
@@ -130,7 +132,7 @@ public class Dijkstra<VT> {
         }
     }
 
-    private class Three implements Comparable<Three> {
+    public class Three implements Comparable<Three> {
         VT label;
         Double weight;
         VT prev;
@@ -140,6 +142,8 @@ public class Dijkstra<VT> {
             this.weight = weight;
             this.prev = prev;
         }
+
+        public VT getPrev() {return prev;}
 
         @Override
         public int compareTo(@NonNull Three t) {
