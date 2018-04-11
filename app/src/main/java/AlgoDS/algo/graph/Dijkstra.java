@@ -2,13 +2,17 @@ package AlgoDS.algo.graph;
 
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.TreeSet;
 
 import AlgoDS.ds.graph.Edge;
+import AlgoDS.ds.graph.Vertex;
 import AlgoDS.ds.graph.WeightedGraph;
 
 /* *
@@ -85,7 +89,7 @@ public class Dijkstra<VT> {
      * This is optimized version of shortest path algorithm, whose running time is O(E logE)
      * this works better than other implementations in practise
      */
-    public void shortestPathOptimized(VT source, Boolean accessible) {
+    public List<VT> shortestPathOptimized(VT source, VT target, Boolean accessible) {
         PriorityQueue<Three> queue = new PriorityQueue<>();
         HashMap<VT, Three> map = new HashMap<>();
         for (VT vertex : graph.getVertices()) {
@@ -98,7 +102,7 @@ public class Dijkstra<VT> {
 
         while (!queue.isEmpty()) {
 
-            Three three = queue.remove();
+            Three three = queue.poll();
 
             if (map.get(three.label) != three) continue; // if pair is already updated
 
@@ -106,14 +110,22 @@ public class Dijkstra<VT> {
                 if (accessible && !edge.getAccessible()) continue;
                 double newPath = three.weight + edge.getWeight();
                 if (newPath < map.get(edge.getTo()).weight) {
+                    queue.remove(map.get(edge.getTo()));
                     Three newThree = new Three(edge.getTo(), newPath, edge.getFrom());
                     map.put(edge.getTo(), newThree);
                     queue.add(newThree);
                 }
             }
         }
-
         this.distance = map;
+        List<VT> path = new ArrayList<VT>();
+        VT ver = target;
+        while (ver != source) {
+            path.add(ver);
+            ver = ((Three) map.get(ver)).prev;
+        }
+        Collections.reverse(path);
+        return path;
 
     }
 

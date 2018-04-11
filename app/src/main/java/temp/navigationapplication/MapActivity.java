@@ -2,6 +2,7 @@ package temp.navigationapplication;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,6 +29,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,7 +49,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private FusedLocationProviderClient mFusedLocationClient;
     private WeightedGraph<LocationDataPoint> testGraph;
     private LocationDataPoint src; //last known location
-    private HashMap <String, LocationDataPoint> checkPoints = new HashMap<>();
+    private HashMap<String, LocationDataPoint> checkPoints = new HashMap<>();
 
 
     @Override
@@ -69,8 +73,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         initializeMap();
     }
 
-    public void initializeMap()
-    {
+    public void initializeMap() {
         checkPoints.put("hecht", new LocationDataPoint(35.018046, 32.763212, true));
         checkPoints.put("eshkol", new LocationDataPoint(35.017679, 32.762889, true));
         checkPoints.put("northParking", new LocationDataPoint(35.016614, 32.764143, true));
@@ -135,13 +138,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     //This method finds the point on the graph which is closest to the user's current location.
     public static LocationDataPoint closestPoint(WeightedGraph<LocationDataPoint> graph, LocationDataPoint currentLoc) {
         double dist;
-        double minDist=1000000000;
-        LocationDataPoint closest=null;
+        double minDist = Double.POSITIVE_INFINITY;
+        LocationDataPoint closest = null;
         for (LocationDataPoint loc : graph.getVertices()) {
-            CalculateDistance calc = new CalculateDistance();
-            dist = calc.computeDistanceAndBearing(loc.getLatitude(), loc.getLongitude(), currentLoc.getLatitude(), currentLoc.getLongitude())[0];
-            if (dist<minDist)
-            {
+            dist = CalculateDistance.distanceBetween(loc.getLatitude(), loc.getLongitude(), currentLoc.getLatitude(), currentLoc.getLongitude())[0];
+            if (dist < minDist) {
                 closest = loc;
                 minDist = dist;
             }
@@ -149,14 +150,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         return closest;
     }
 
-    public void showPath (Dijkstra<LocationDataPoint> dijkstra, LocationDataPoint start, LocationDataPoint dest)
-    {
-       while(dijkstra.getDistance().get(dest).getPrev()!=start)
-       {
-           mMap.addMarker(new MarkerOptions().position(new LatLng(dest.getLatitude(), dest.getLongitude())));
-           dest=(LocationDataPoint)dijkstra.getDistance().get(dest).getPrev();
-       }
-        mMap.addMarker(new MarkerOptions().position(new LatLng(start.getLatitude(), start.getLongitude())).title("Start"));
+    public void showPath(List<LocationDataPoint> list) {
+        Iterator<LocationDataPoint> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            LocationDataPoint dest = iterator.next();
+            mMap.addMarker(new MarkerOptions().position(new LatLng(dest.getLatitude(), dest.getLongitude())));
+        }
+
     }
 
     public static WeightedGraph<LocationDataPoint> toRealGraph(WeightedGraph<LocationDataPoint> graph) {
@@ -192,7 +192,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) throws SecurityException {
         mMap = googleMap;
 
-        JsonElement graphElement = null;
+        JsonElement graphElement;
         WeightedGraph<LocationDataPoint> TestGraph;
         try {
             graphElement = fileToJsonElement(getResources().openRawResource(R.raw.graph));
@@ -248,11 +248,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         Dijkstra<LocationDataPoint> dijkstra = new Dijkstra<>(testGraph);
         Map<LocationDataPoint, Dijkstra<LocationDataPoint>.Three> path = new HashMap<>();
         LocationDataPoint start = closestPoint(testGraph, src);
-        dijkstra.shortestPathOptimized(start, false);
+
         path = dijkstra.getDistance();
         switch (item.getItemId()) {
             case R.id.hecht:
-                showPath(dijkstra, start, checkPoints.get("hecht"));
+                List<LocationDataPoint> way = dijkstra.shortestPathOptimized(start, checkPoints.get("hecht"), false);
+                showPath(way);
                 return true;
             default:
                 return true;
