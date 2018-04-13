@@ -93,7 +93,7 @@ public class Edge<VT> implements Comparable<Edge<VT>> {
     }
 
     public Edge<VT> getOpposite(){
-        return new Edge<>(from, to, weight, accessible);
+        return new Edge<>(to, from, weight, accessible);
     }
 
     @Override

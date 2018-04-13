@@ -1,9 +1,12 @@
 package temp.navigationapplication;
 
 import android.location.Location;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.util.Pair;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -178,6 +181,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             LocationDataPoint locTo = new LocationDataPoint(to1.get("longitude"), to1.get("latitude"), (boolean) accT);
             Edge<LocationDataPoint> realEdge = new Edge<LocationDataPoint>(locFrom, locTo, e.getWeight(), e.getAccessible());
             realSet.add(realEdge);
+            realSet.add(realEdge.getOpposite());
         }
 
         for (Edge<LocationDataPoint> e : realSet) {
@@ -249,11 +253,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         Map<LocationDataPoint, Dijkstra<LocationDataPoint>.Three> path = new HashMap<>();
         LocationDataPoint start = closestPoint(testGraph, src);
 
-        path = dijkstra.getDistance();
+        //path = dijkstra.getDistance();
         switch (item.getItemId()) {
             case R.id.hecht:
-                List<LocationDataPoint> way = dijkstra.shortestPathOptimized(start, checkPoints.get("hecht"), false);
-                showPath(way);
+                //List<LocationDataPoint> way =
+                dijkstra.shortestPathOptimized(/*start*/checkPoints.get("eshkol")/*, checkPoints.get("hecht"), false*/);
+                //Log.d("Dijkstra", dijkstra.getDistance() + "");
+                //showPath(way);
                 return true;
             default:
                 return true;
