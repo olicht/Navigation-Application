@@ -2,19 +2,13 @@ package AlgoDS.algo.graph;
 
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.Set;
-import java.util.TreeSet;
 
 import AlgoDS.ds.graph.Edge;
-import AlgoDS.ds.graph.Vertex;
 import AlgoDS.ds.graph.WeightedGraph;
-import AlgoDS.utils.LocationDataPoint;
+//import AlgoDS.utils.LocationDataPoint;
 
 /* *
  * Created by sherxon on 1/7/17.

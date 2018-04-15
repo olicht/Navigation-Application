@@ -1,12 +1,8 @@
 package temp.navigationapplication;
 
 import android.location.Location;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.util.Pair;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +10,7 @@ import android.widget.Button;
 import android.widget.PopupMenu;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,17 +31,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
 import AlgoDS.algo.graph.Dijkstra;
 import AlgoDS.ds.graph.Edge;
-import AlgoDS.ds.graph.LocationEdge;
-import AlgoDS.ds.graph.LocationWeightedGraph;
 import AlgoDS.ds.graph.WeightedGraph;
-
-import com.google.android.gms.location.LocationServices;
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
@@ -181,12 +173,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             LocationDataPoint locTo = new LocationDataPoint(to1.get("longitude"), to1.get("latitude"), (boolean) accT);
             Edge<LocationDataPoint> realEdge = new Edge<LocationDataPoint>(locFrom, locTo, e.getWeight(), e.getAccessible());
             realSet.add(realEdge);
-            realSet.add(realEdge.getOpposite());
+            //realSet.add(realEdge.getOpposite());
         }
 
         for (Edge<LocationDataPoint> e : realSet) {
-            realGraph.addVertex(e.getFrom());
-            realGraph.addVertex(e.getTo());
+            if (!realGraph.getVertices().contains(e.getFrom())) realGraph.addVertex(e.getFrom());
+            if (!realGraph.getVertices().contains(e.getTo())) realGraph.addVertex(e.getTo());
+
             realGraph.addEdge(e);
         }
         return realGraph;
