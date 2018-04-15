@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity
             Dijkstra<LocationDataPoint> dijkstra = new Dijkstra<>(TestGraph);
             Vertex<LocationDataPoint> a = new Vertex<>();
             LocationDataPoint src = (LocationDataPoint)TestGraph.getVertices().toArray()[0];
-            dijkstra.shortestPathOptimized(src, src, true);
+            // dijkstra.shortestPathOptimized(src, src, true);
 //            StringBuilder output = new StringBuilder();
 //            for(int i = 1; i < 7; i++)
 //            {
