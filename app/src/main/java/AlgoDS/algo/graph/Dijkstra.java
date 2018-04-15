@@ -2,7 +2,10 @@ package AlgoDS.algo.graph;
 
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -27,7 +30,7 @@ import AlgoDS.ds.graph.WeightedGraph;
  */
 public class Dijkstra<VT> {
 
-    private Map<VT, Pair> distance;
+    private Map<VT, Three> distance;
     private WeightedGraph<VT> graph;
 
     public Dijkstra(@NonNull WeightedGraph<VT> graph) {
@@ -35,11 +38,11 @@ public class Dijkstra<VT> {
         this.distance = new HashMap<>();
     }
 
-    public Map<VT, Pair> getDistance() {
+    public Map<VT, Three> getDistance() {
         return distance;
     }
 
-    public void setDistance(Map<VT, Pair> distance) {
+    public void setDistance(Map<VT, Three> distance) {
         this.distance = distance;
     }
 
@@ -84,74 +87,76 @@ public class Dijkstra<VT> {
      * This is optimized version of shortest path algorithm, whose running time is O(E logE)
      * this works better than other implementations in practise
      */
-//    public List<VT> shortestPathOptimized(VT source, VT target, Boolean accessible) {
-//        PriorityQueue<Three> queue = new PriorityQueue<>();
-//        HashMap<VT, Pair> map = new HashMap<>();
-//        for (VT vertex : graph.getVertices()) {
-//            Three three;
-//            if (source.equals(vertex)) three = new Three(vertex, 0d, null);
-//            else three = new Three(vertex, Double.POSITIVE_INFINITY, null);
-//            queue.add(three);
-//            map.put(vertex, three);
-//        }
-//
-//        while (!queue.isEmpty()) {
-//
-//            Three three = queue.poll();
-//
-//            if (map.get(three.label) != three) continue; // if pair is already updated
-//
-//            for (Edge<VT> edge : graph.getEdges(three.label)) {
-//                if (accessible && !edge.getAccessible()) continue;
-//                double newPath = three.weight + edge.getWeight();
-//                if (newPath < map.get(edge.getTo()).weight) {
-//                    //queue.remove(map.get(edge.getTo()));
-//                    Three newThree = new Three(edge.getTo(), newPath, edge.getFrom());
-//                    map.put(edge.getTo(), newThree);
-//                    queue.add(newThree);
-//                }
-//            }
-//        }
-//        this.distance = map;
-//        List<VT> path = new ArrayList<>();
-//        VT ver = target;
-//        while (ver != source) {
-//            path.add(ver);
-//            ver = (map.get(ver)).prev;
-//        }
-//        Collections.reverse(path);
-//        return path;
-//
-//    }
-    public Map<VT, Pair> shortestPathOptimized(VT source) {
-        PriorityQueue<Pair> queue = new PriorityQueue<>();
-        Map<VT, Pair> map = new HashMap<>();
+    public List<VT> shortestPathOptimized(VT source, VT target, Boolean accessible) {
+        PriorityQueue<Three> queue = new PriorityQueue<>();
+        HashMap<VT, Three> map = new HashMap<>();
         for (VT vertex : graph.getVertices()) {
-            Pair pair;
-            if (source.equals(vertex)) pair = new Pair(vertex, 0d);
-            else pair = new Pair(vertex, Double.POSITIVE_INFINITY);
-            queue.add(pair);
-            map.put(vertex, pair);
+            Three three;
+            if (source.equals(vertex)) three = new Three(vertex, 0d, null);
+            else three = new Three(vertex, Double.POSITIVE_INFINITY, null);
+            queue.add(three);
+            map.put(vertex, three);
         }
+
         while (!queue.isEmpty()) {
 
-            Pair pair = queue.remove();
+            Three three = queue.poll();
 
-            if (map.get(pair.label) != pair) continue; // if pair is already updated
+            if (map.get(three.label) != three) continue; // if pair is already updated
 
-            for (Edge edge : graph.getEdges(pair.label)) {
-                Double newPath = pair.weight + edge.getWeight();
+            for (Edge<VT> edge : graph.getEdges(three.label)) {
+                if (accessible && !edge.getAccessible()) continue;
+                double newPath = three.weight + edge.getWeight();
                 if (newPath < map.get(edge.getTo()).weight) {
-                    Pair newPair = new Pair((VT) edge.getTo(), newPath);
-                    map.put((VT) edge.getTo(), newPair);
-                    queue.add(newPair);
+                    //queue.remove(map.get(edge.getTo()));
+                    Three newThree = new Three(edge.getTo(), newPath, edge.getFrom());
+                    map.put(edge.getTo(), newThree);
+                    queue.add(newThree);
                 }
             }
         }
-        return map;
+        this.distance = map;
+        List<VT> path = new ArrayList<>();
+        VT ver = target;
+        while (ver != null) {
+            path.add(ver);
+            ver = (map.get(ver)).prev;
+        }
+        Collections.reverse(path);
+        return path;
+
     }
 
+    /* public Map<VT, Pair> shortestPathOptimized(VT source) {
+         PriorityQueue<Pair> queue = new PriorityQueue<>();
+         Map<VT, Pair> map = new HashMap<>();
+         for (VT vertex : graph.getVertices()) {
+             Pair pair;
+             if (source.equals(vertex)) pair = new Pair(vertex, 0d);
+             else pair = new Pair(vertex, Double.POSITIVE_INFINITY);
+             queue.add(pair);
+             map.put(vertex, pair);
+         }
+         while (!queue.isEmpty()) {
 
+             Pair pair = queue.remove();
+
+             if (map.get(pair.label) != pair) continue; // if pair is already updated
+
+             for (Edge edge : graph.getEdges(pair.label)) {
+                 Double newPath = pair.weight + edge.getWeight();
+                 if (newPath < map.get(edge.getTo()).weight) {
+                     Pair newPair = new Pair((VT) edge.getTo(), newPath);
+                     map.put((VT) edge.getTo(), newPair);
+                     queue.add(newPair);
+                 }
+             }
+         }
+         distance=map;
+         return map;
+     }
+
+ */
     private class Pair implements Comparable<Pair> {
         VT label;
         Double weight;

@@ -16,13 +16,25 @@
         android:id="@+id/start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="24dp"
-        android:background="#359c5e"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="22dp"
+        android:background="@android:color/holo_green_light"
         android:onClick="StartNavigating"
         android:padding="8dp"
         android:text="בחר יעד"
         android:textColor="#ffffff" />
 
+    <Button
+        android:id="@+id/clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="87dp"
+        android:background="@android:color/holo_blue_bright"
+        android:onClick="onClick1"
+        android:padding="8dp"
+        android:text="נקה מפה"
+        android:textColor="#ffffff" />
 </RelativeLayout>
