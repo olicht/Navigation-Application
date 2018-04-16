@@ -2,6 +2,7 @@ package temp.navigationapplication;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,6 +35,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import AlgoDS.algo.graph.Dijkstra;
@@ -47,7 +49,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private WeightedGraph<LocationDataPoint> testGraph;
     private LocationDataPoint src; //last known location
     private HashMap<String, LocationDataPoint> checkPoints = new HashMap<>();
+    private HashMap<String, LocationDataPoint> FoodPoints = new HashMap<>();
 
+
+//TODO: change every "eshkol" with current location and test it at the university!
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -97,6 +102,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         checkPoints.put("shopsRoad", new LocationDataPoint(35.019084, 32.761974, true));
         checkPoints.put("educationParking", new LocationDataPoint(35.017147, 32.762698, true));
         checkPoints.put("upperParking", new LocationDataPoint(35.018844, 32.761799, true));
+
+        FoodPoints.put("food", new LocationDataPoint(35.017857, 32.763148, true));
+        FoodPoints.put("aguda", new LocationDataPoint(35.018997, 32.762180, true));
+        FoodPoints.put("education", new LocationDataPoint(35.018377, 32.761893, true));
+        FoodPoints.put("pilpelet", new LocationDataPoint(35.021007, 32.760468, true));
+        FoodPoints.put("shopsRoad", new LocationDataPoint(35.019084, 32.761974, true));
+        FoodPoints.put("greg", new LocationDataPoint(35.019785, 32.761953, true));
+        FoodPoints.put("smell", new LocationDataPoint(35.020779, 32.761295, true));
     }
 
     /**
@@ -195,6 +208,36 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         return realGraph;
     }
 
+    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public String translateToHebrew(String s) {
+        switch (s) {
+            case "food":
+                return "מתחם המזון";
+            case "smell":
+                return "ארומה";
+            case "shopsRoad":
+                return "קפה עלית";
+            case "education":
+                return "קפה מרפסת";
+            case "greg":
+                return "גרג";
+            case "pilpelet":
+                return "פלפלת";
+            case "aguda":
+                return "קפה אגודה";
+            default:
+                return " ";
+        }
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) throws SecurityException {
         mMap = googleMap;
@@ -250,7 +293,60 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mMap.clear();
     }
 
+    public void onClick2(View v) {
+        Dijkstra<LocationDataPoint> dijkstra = new Dijkstra<>(testGraph);
+        Map<LocationDataPoint, Dijkstra<LocationDataPoint>.Three> path = new HashMap<>();
+        LocationDataPoint start = closestPoint(testGraph, src);
+        List<LocationDataPoint> way;
+        way = dijkstra.shortestPathOptimized(/*start*/checkPoints.get("rabin"), checkPoints.get("food"), true /*, checkPoints.get("hecht"), false*/);
+        double minDist = dijkstra.getDistance().get(FoodPoints.get("food")).getWeight();
+        LocationDataPoint minRest = FoodPoints.get("food");
+        double dist;
+        Iterator it = FoodPoints.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            dist = dijkstra.getDistance().get(FoodPoints.get(pair.getKey())).getWeight();
+            if (dist < minDist) {
+                minDist = dist;
+                minRest = (LocationDataPoint) pair.getValue();
+            }
+        }
 
+        way = dijkstra.shortestPathOptimized(/*start*/checkPoints.get("rabin"), minRest, true /*, checkPoints.get("hecht"), false*/);
+        showPath(way);
+        String nearestRest = translateToHebrew(getKeyByValue(FoodPoints, minRest));
+        Snackbar mySnackbar = Snackbar.make(v, nearestRest, 5000);
+        mySnackbar.show();
+
+//        // 1. Instantiate an AlertDialog.Builder with its constructor
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+//
+//// 2. Chain together various setter methods to set the dialog characteristics
+//        builder.setMessage(R.string.dialog_message)
+//                .setTitle(R.string.dialog_title);
+//        LocationDataPoint finalMinRest = minRest;
+//        builder.setPositiveButton(R.string.navigate, new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int id) {
+//                // User clicked Nevigate button
+//                List<LocationDataPoint> path = dijkstra.shortestPathOptimized(/*start*/checkPoints.get("eshkol"), finalMinRest, true /*, checkPoints.get("hecht"), false*/);
+//                showPath(path);
+//            }
+//        });
+//        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int id) {
+//                // User cancelled the dialog
+//                dialog.cancel();
+//            }
+//        });
+//// 3. Get the AlertDialog from create()
+//        AlertDialog dialog = builder.create();
+
+    }
+
+    //    public void showNearestRest() {
+//        DialogFragment newFragment = new FireMissilesDialogFragment();
+//        newFragment.show(getSupportFragmentManager(), "missiles");
+//    }
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         // Handle item selection

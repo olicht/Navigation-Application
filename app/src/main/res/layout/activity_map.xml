@@ -31,10 +31,23 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="87dp"
+        android:layout_marginTop="147dp"
         android:background="@android:color/holo_blue_bright"
         android:onClick="onClick1"
         android:padding="8dp"
         android:text="נקה מפה"
+        android:textColor="#ffffff" />
+
+    <Button
+        android:id="@+id/restaurant"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="83dp"
+        android:background="#ff0051"
+        android:onClick="onClick2"
+        android:padding="8dp"
+        android:text="נווט למסעדה הקרובה ביותר"
         android:textColor="#ffffff" />
 </RelativeLayout>

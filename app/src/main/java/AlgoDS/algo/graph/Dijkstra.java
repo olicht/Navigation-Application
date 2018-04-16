@@ -185,6 +185,10 @@ public class Dijkstra<VT> {
 
         public VT getPrev() {return prev;}
 
+        public double getWeight() {
+            return weight;
+        }
+
         @Override
         public int compareTo(@NonNull Three t) {
             return (int) (this.weight - t.weight);
