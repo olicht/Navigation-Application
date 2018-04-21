@@ -157,9 +157,9 @@ public class Dijkstra<VT> {
      }
 
  */
-    private class Pair implements Comparable<Pair> {
+    public class Pair implements Comparable<Pair> {
         VT label;
-        Double weight;
+        public Double weight;
 
         Pair(VT name, Double weight) {
             this.label = name;
