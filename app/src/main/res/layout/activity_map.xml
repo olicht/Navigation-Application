@@ -48,7 +48,7 @@
         android:background="#ff0051"
         android:onClick="onClick2"
         android:padding="8dp"
-        android:text="נווט למסעדה הקרובה ביותר"
+        android:text="מסעדות"
         android:textColor="#ffffff" />
 
     <Switch
