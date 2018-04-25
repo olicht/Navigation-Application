@@ -1,5 +1,6 @@
 package temp.navigationapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -12,23 +13,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.util.Scanner;
-
-import AlgoDS.algo.graph.Dijkstra;
-import AlgoDS.ds.graph.Vertex;
-import AlgoDS.ds.graph.WeightedGraph;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private Button mLaunchHeatActivity;
+    private Button mLaunchMapActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,48 +39,80 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
-        Button button = findViewById(R.id.TestButton);
+        mLaunchMapActivity = (Button) findViewById(R.id.launch_activity); //for the map activity
 
-        button.setOnClickListener(v -> {
-            Gson gson = new Gson();
+        mLaunchMapActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-            InputStream is = getResources().openRawResource(R.raw.graph);
-            String json = (new Scanner(is)).useDelimiter("\\Z").next();
-
-            assert json != null;
-            WeightedGraph<LocationDataPoint> TestGraph = gson.fromJson(json, new TypeToken<WeightedGraph<LocationDataPoint>>(){}.getType());
-//            TestGraph.addVertex(0);
-//            TestGraph.addVertex(1);
-//            TestGraph.addVertex(2);
-//            TestGraph.addVertex(3);
-//            TestGraph.addVertex(4);
-//            TestGraph.addVertex(5);
-//            TestGraph.addVertex(6);
-//
-//            TestGraph.addEdge(0, 1, 5.0, true);
-//            TestGraph.addEdge(0, 2, 13.0, true);
-//            TestGraph.addEdge(5, 6, 3.0, false);
-//            TestGraph.addEdge(2, 4, 3.0, true);
-//            TestGraph.addEdge(2, 5, 3.0, false);
-//            TestGraph.addEdge(4, 6, 15.0, true);
-//            TestGraph.addEdge(1, 5, 8.0, true);
-//            TestGraph.addEdge(2, 3, 11.0, false);
-
-            Dijkstra<LocationDataPoint> dijkstra = new Dijkstra<>(TestGraph);
-            Vertex<LocationDataPoint> a = new Vertex<>();
-            LocationDataPoint src = (LocationDataPoint)TestGraph.getVertices().toArray()[0];
-            // dijkstra.shortestPathOptimized(src, src, true);
-//            StringBuilder output = new StringBuilder();
-//            for(int i = 1; i < 7; i++)
-//            {
-//                output.append(dijkstra.getDistance().get(i)).append("\n");
-//            }
-//            TextView out = findViewById(R.id.output1);
-//            out.setText(output.toString());
+                launchMapActivity();
+            }
         });
+
+        mLaunchMapActivity = (Button) findViewById(R.id.launch_heat_activity); //for the heatmap activity
+
+        mLaunchMapActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                launchHeatActivity();
+            }
+        });
+//        NavigationView navigationView = findViewById(R.id.nav_view);
+//        navigationView.setNavigationItemSelectedListener(this);
+//
+//        Button button = findViewById(R.id.TestButton);
+//
+//        button.setOnClickListener(v -> {
+//            Gson gson = new Gson();
+//
+//            InputStream is = getResources().openRawResource(R.raw.graph);
+//            String json = (new Scanner(is)).useDelimiter("\\Z").next();
+//
+//            assert json != null;
+//            WeightedGraph<LocationDataPoint> TestGraph = gson.fromJson(json, new TypeToken<WeightedGraph<LocationDataPoint>>(){}.getType());
+////            TestGraph.addVertex(0);
+////            TestGraph.addVertex(1);
+////            TestGraph.addVertex(2);
+////            TestGraph.addVertex(3);
+////            TestGraph.addVertex(4);
+////            TestGraph.addVertex(5);
+////            TestGraph.addVertex(6);
+////
+////            TestGraph.addEdge(0, 1, 5.0, true);
+////            TestGraph.addEdge(0, 2, 13.0, true);
+////            TestGraph.addEdge(5, 6, 3.0, false);
+////            TestGraph.addEdge(2, 4, 3.0, true);
+////            TestGraph.addEdge(2, 5, 3.0, false);
+////            TestGraph.addEdge(4, 6, 15.0, true);
+////            TestGraph.addEdge(1, 5, 8.0, true);
+////            TestGraph.addEdge(2, 3, 11.0, false);
+//
+//            Dijkstra<LocationDataPoint> dijkstra = new Dijkstra<>(TestGraph);
+//            Vertex<LocationDataPoint> a = new Vertex<>();
+//            LocationDataPoint src = (LocationDataPoint)TestGraph.getVertices().toArray()[0];
+//            // dijkstra.shortestPathOptimized(src, src, true);
+////            StringBuilder output = new StringBuilder();
+////            for(int i = 1; i < 7; i++)
+////            {
+////                output.append(dijkstra.getDistance().get(i)).append("\n");
+////            }
+////            TextView out = findViewById(R.id.output1);
+////            out.setText(output.toString());
+//        });
+
+    }
+
+    private void launchMapActivity() {
+
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
+    }
+
+    private void launchHeatActivity() {
+        Intent intent = new Intent(this, HeatmapActivity.class);
+        startActivity(intent);
     }
 
     @Override

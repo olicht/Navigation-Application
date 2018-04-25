@@ -57,6 +57,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private HashMap<String, LocationDataPoint> checkPoints = new HashMap<>();
     private HashMap<String, LocationDataPoint> FoodPoints = new HashMap<>();
     private boolean accessible;
+    private Button mBtGoBack;
 
     public class Pair<VT> implements Comparable<Pair<VT>> {
         VT label;
@@ -100,6 +101,15 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         initializeMap();
+
+        mBtGoBack = (Button) findViewById(R.id.go_back);
+
+        mBtGoBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
     public void initializeMap() {
@@ -381,7 +391,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
 
     }
-
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {

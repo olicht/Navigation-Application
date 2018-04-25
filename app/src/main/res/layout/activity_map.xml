@@ -51,6 +51,18 @@
         android:text="מסעדות"
         android:textColor="#ffffff" />
 
+    <Button
+        android:id="@+id/go_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="25dp"
+        android:background="@android:color/holo_purple"
+        android:padding="8dp"
+        android:text="חזרה"
+        android:textColor="#ffffff" />
+
     <Switch
         android:id="@+id/switchButton"
         android:layout_width="wrap_content"

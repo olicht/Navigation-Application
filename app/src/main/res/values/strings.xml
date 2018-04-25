@@ -11,4 +11,5 @@
     <string name="dialog_title">המסעדה הקרובה ביותר:</string>
     <string name="navigate">נווט</string>
     <string name="cancel">חזור</string>
+    <string name="title_activity_heatmap">Map</string>
 </resources>
