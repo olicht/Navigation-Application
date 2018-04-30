@@ -13,14 +13,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private Button mLaunchHeatActivity;
-    private Button mLaunchMapActivity;
+//    private Button mLaunchHeatActivity;
+//    private Button mLaunchMapActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +28,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+        fab.setOnClickListener(view -> Snackbar.make(view, "פתח את התפריט שלמעלה מימין ובחר את הפעולה הרצויה :)", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -39,28 +37,28 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-
-        mLaunchMapActivity = (Button) findViewById(R.id.launch_activity); //for the map activity
-
-        mLaunchMapActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                launchMapActivity();
-            }
-        });
-
-        mLaunchMapActivity = (Button) findViewById(R.id.launch_heat_activity); //for the heatmap activity
-
-        mLaunchMapActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                launchHeatActivity();
-            }
-        });
-//        NavigationView navigationView = findViewById(R.id.nav_view);
-//        navigationView.setNavigationItemSelectedListener(this);
+//
+//        mLaunchMapActivity = (Button) findViewById(R.id.launch_activity); //for the map activity
+//
+//        mLaunchMapActivity.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                launchMapActivity();
+//            }
+//        });
+//
+//        mLaunchHeatActivity = (Button) findViewById(R.id.launch_heat_activity); //for the heatmap activity
+//
+//        mLaunchHeatActivity.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                launchHeatActivity();
+//            }
+//        });
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 //
 //        Button button = findViewById(R.id.TestButton);
 //
@@ -151,21 +149,28 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        switch (item.getItemId()) {
+            case (R.id.nav_navigate):
+                launchMapActivity();
+                break;
+            case (R.id.nav_gallery):
+                launchHeatActivity();
+                break;
+            default:
         }
+//            // Handle the camera action
+//        } else if (id == R.id.nav_gallery) {
+//
+//        } else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+//        } else if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

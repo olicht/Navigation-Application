@@ -21,6 +21,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -202,7 +203,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         LocationDataPoint prev = null;
         while (iterator.hasNext()) {
             LocationDataPoint dest = iterator.next();
-            mMap.addMarker(new MarkerOptions().position(new LatLng(dest.getLatitude(), dest.getLongitude())));
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(new LatLng(dest.getLatitude(), dest.getLongitude()));
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker());
+            mMap.addMarker(markerOptions);
             if (prev != null) {
                 PolylineOptions polylineOptions = new PolylineOptions()
                         .add(new LatLng(dest.getLatitude(), dest.getLongitude())) // Point A.
