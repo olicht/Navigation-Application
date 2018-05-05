@@ -13,7 +13,7 @@
             android:icon="@android:drawable/ic_dialog_map"
             android:title="הצג מפת חום" />
         <item
-            android:id="@+id/nav_chat"
+            android:id="@+id/nav_slideshow"
             android:icon="@android:drawable/sym_action_chat"
             android:title="התחל צ'אט" />
         <!--<item-->

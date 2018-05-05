@@ -113,6 +113,11 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    private void launchChatActivity() {
+        Intent intent = new Intent(this, ChatActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -156,6 +161,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case (R.id.nav_gallery):
                 launchHeatActivity();
+                break;
+            case (R.id.nav_slideshow):
+                launchChatActivity();
                 break;
             default:
         }
