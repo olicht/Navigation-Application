@@ -20,12 +20,12 @@ import com.firebase.ui.database.FirebaseListOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private int SIGN_IN_REQUEST_CODE;
+    private int SIGN_IN_REQUEST_CODE = 1;
     private FirebaseListAdapter<ChatMessage> listAdapter;
 
     @Override
@@ -55,7 +55,7 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         //set the send button settings:
-        FloatingActionButton sendBtn = findViewById(R.id.fabi);
+        FloatingActionButton sendBtn = findViewById(R.id.fab);
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,7 +70,6 @@ public class ChatActivity extends AppCompatActivity {
                         );
                 // Clear the input
                 input.setText("");
-                displayChatMessages();
             }
         });
     }
@@ -79,14 +78,16 @@ public class ChatActivity extends AppCompatActivity {
 
         ListView listOfMessages = (ListView) findViewById(R.id.list_of_messages);
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        Query query = FirebaseDatabase.getInstance().getReference()
+                .limitToLast(20);
 
         FirebaseListOptions<ChatMessage> listOptions = new FirebaseListOptions.Builder<ChatMessage>()
-                .setQuery(databaseReference, ChatMessage.class)
+                .setQuery(query, ChatMessage.class)
                 .setLayout(R.layout.message)
                 .build();
 
         listAdapter = new FirebaseListAdapter<ChatMessage>(listOptions) {
+
             @Override
             protected void populateView(View v, ChatMessage model, int position) {
                 // Get references to the views of message.xml
@@ -101,12 +102,12 @@ public class ChatActivity extends AppCompatActivity {
                 // Format the date before showing it
                 messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
                         model.getMessageTime()));
+
             }
+
         };
-
+        listAdapter.startListening();
         listOfMessages.setAdapter(listAdapter);
-        //listAdapter.notifyDataSetChanged();
-
     }
 
     @Override

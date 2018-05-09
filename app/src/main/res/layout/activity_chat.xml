@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:src="@android:drawable/ic_menu_send"
-        android:id="@+id/fabi"
+        android:id="@+id/fab"
         android:tint="@android:color/white"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
