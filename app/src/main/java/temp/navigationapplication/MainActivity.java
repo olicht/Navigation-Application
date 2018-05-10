@@ -13,12 +13,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-//    private Button mLaunchHeatActivity;
-//    private Button mLaunchMapActivity;
+    private int SIGN_IN_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,69 +41,29 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-//
-//        mLaunchMapActivity = (Button) findViewById(R.id.launch_activity); //for the map activity
-//
-//        mLaunchMapActivity.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                launchMapActivity();
-//            }
-//        });
-//
-//        mLaunchHeatActivity = (Button) findViewById(R.id.launch_heat_activity); //for the heatmap activity
-//
-//        mLaunchHeatActivity.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                launchHeatActivity();
-//            }
-//        });
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-//
-//        Button button = findViewById(R.id.TestButton);
-//
-//        button.setOnClickListener(v -> {
-//            Gson gson = new Gson();
-//
-//            InputStream is = getResources().openRawResource(R.raw.graph);
-//            String json = (new Scanner(is)).useDelimiter("\\Z").next();
-//
-//            assert json != null;
-//            WeightedGraph<LocationDataPoint> TestGraph = gson.fromJson(json, new TypeToken<WeightedGraph<LocationDataPoint>>(){}.getType());
-////            TestGraph.addVertex(0);
-////            TestGraph.addVertex(1);
-////            TestGraph.addVertex(2);
-////            TestGraph.addVertex(3);
-////            TestGraph.addVertex(4);
-////            TestGraph.addVertex(5);
-////            TestGraph.addVertex(6);
-////
-////            TestGraph.addEdge(0, 1, 5.0, true);
-////            TestGraph.addEdge(0, 2, 13.0, true);
-////            TestGraph.addEdge(5, 6, 3.0, false);
-////            TestGraph.addEdge(2, 4, 3.0, true);
-////            TestGraph.addEdge(2, 5, 3.0, false);
-////            TestGraph.addEdge(4, 6, 15.0, true);
-////            TestGraph.addEdge(1, 5, 8.0, true);
-////            TestGraph.addEdge(2, 3, 11.0, false);
-//
-//            Dijkstra<LocationDataPoint> dijkstra = new Dijkstra<>(TestGraph);
-//            Vertex<LocationDataPoint> a = new Vertex<>();
-//            LocationDataPoint src = (LocationDataPoint)TestGraph.getVertices().toArray()[0];
-//            // dijkstra.shortestPathOptimized(src, src, true);
-////            StringBuilder output = new StringBuilder();
-////            for(int i = 1; i < 7; i++)
-////            {
-////                output.append(dijkstra.getDistance().get(i)).append("\n");
-////            }
-////            TextView out = findViewById(R.id.output1);
-////            out.setText(output.toString());
-//        });
 
+        //start sign in/up dialog
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            // Start sign in/sign up activity
+            startActivityForResult(
+                    AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .build(),
+                    SIGN_IN_REQUEST_CODE
+            );
+        } else {
+            // User is already signed in. Therefore, display
+            // a welcome Toast
+            Toast.makeText(this,
+                    "Welcome " + FirebaseAuth.getInstance()
+                            .getCurrentUser()
+                            .getDisplayName(),
+                    Toast.LENGTH_LONG)
+                    .show();
+
+        }
     }
 
     private void launchMapActivity() {
@@ -135,20 +99,20 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -184,4 +148,48 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == SIGN_IN_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this,
+                        "Successfully signed in. Welcome!",
+                        Toast.LENGTH_LONG)
+                        .show();
+            } else {
+                Toast.makeText(this,
+                        "We couldn't sign you in. Please try again later.",
+                        Toast.LENGTH_LONG)
+                        .show();
+
+                // Close the app
+                finish();
+            }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_sign_out) {
+            AuthUI.getInstance().signOut(this)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(MainActivity.this,
+                                    "You have been signed out.",
+                                    Toast.LENGTH_LONG)
+                                    .show();
+
+                            // Close activity
+                            finish();
+                        }
+                    });
+        }
+        return true;
+    }
+
 }
