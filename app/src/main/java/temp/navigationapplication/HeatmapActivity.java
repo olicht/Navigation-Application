@@ -44,7 +44,7 @@ public class HeatmapActivity extends FragmentActivity implements OnMapReadyCallb
     private LocationDataPoint src;
     private Button mBtHGoBack;
     private WeightedGraph<LocationDataPoint> testGraph;
-
+    //private LocationMessage locationMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
