@@ -74,7 +74,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private boolean accessible;
     private Button mBtGoBack;
 
-    private GoogleApiClient mGoogleApiClient;
+    private static GoogleApiClient mGoogleApiClient;
     public static final String TAG = MapActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
@@ -114,6 +114,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         }
     }
 
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
@@ -132,17 +133,19 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         if (location == null) {
+            mGoogleApiClient.connect();
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this); //request it
         } else {
             handleNewLocation(location);
         }
-        ;
+
     }
 
     private void handleNewLocation(Location location) {
         Log.d(TAG, location.toString());
         //TODO: send a message to a firebase database for the heatmap
     }
+
     @Override
     public void onConnectionSuspended(int i) {
         Log.i(TAG, "Location services suspended. Please reconnect.");
@@ -210,15 +213,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         initializeMap();
 
-        mBtGoBack = (Button) findViewById(R.id.go_back);
-
-        mBtGoBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -230,12 +224,36 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+
+        mBtGoBack = (Button) findViewById(R.id.go_back);
+
+        mBtGoBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mGoogleApiClient.connect();
+        if (!mGoogleApiClient.isConnected())
+            mGoogleApiClient.connect();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
     }
 
     @Override
@@ -245,6 +263,22 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Call GoogleApiClient connection when starting the Activity
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // Disconnect GoogleApiClient when stopping Activity
+        mGoogleApiClient.disconnect();
     }
 
     public void initializeMap() {

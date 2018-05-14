@@ -37,6 +37,7 @@ public class ChatActivity extends AppCompatActivity {
                 // Read the input field and push a new instance of ChatMessage to the Firebase database
                 FirebaseDatabase.getInstance()
                         .getReference()
+                        .child("messages")
                         .push()
                         .setValue(new ChatMessage(FirebaseAuth.getInstance()
                                 .getCurrentUser()
@@ -46,13 +47,14 @@ public class ChatActivity extends AppCompatActivity {
                 input.setText("");
             }
         });
+
     }
 
     private void displayChatMessages() {
 
         ListView listOfMessages = (ListView) findViewById(R.id.list_of_messages);
 
-        Query query = FirebaseDatabase.getInstance().getReference()
+        Query query = FirebaseDatabase.getInstance().getReference().child("messages")
                 .limitToLast(20);
 
         FirebaseListOptions<ChatMessage> listOptions = new FirebaseListOptions.Builder<ChatMessage>()
