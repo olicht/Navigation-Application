@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/blue"
+        android:orderInCategory="100"
+        android:title="כחול" />
+
+    <item
+        android:id="@+id/red"
+        android:orderInCategory="100"
+        android:title="אדום" />
+
+    <item
+        android:id="@+id/yellow"
+        android:orderInCategory="100"
+        android:title="צהוב" />
+
+    <item
+        android:id="@+id/green"
+        android:orderInCategory="100"
+        android:title="ירוק" />
+
+    <item
+        android:id="@+id/orange"
+        android:orderInCategory="100"
+        android:title="כתום" />
+
+    <item
+        android:id="@+id/pink"
+        android:orderInCategory="100"
+        android:title="ורוד" />
+
+    <item
+        android:id="@+id/purple"
+        android:orderInCategory="100"
+        android:title="סגול" />
+
+    <item
+        android:id="@+id/cyan"
+        android:orderInCategory="100"
+        android:title="תכלת" />
+
+</menu>

@@ -35,6 +35,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -48,6 +49,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -80,6 +82,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private LocationRequest mLocationRequest;
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private ArrayList<Marker> mapMarkers = new ArrayList<>(); //holds all of the markers placed on the map!
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -221,6 +224,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         Button menu = (Button) findViewById(R.id.start);
         menu.setOnClickListener(this);
 
+        Button colorsMenu = (Button) findViewById(R.id.changeColor);
+        colorsMenu.setOnClickListener(this::onClick3);
+
         Switch sw = (Switch) findViewById(R.id.switchButton);
         sw.setOnCheckedChangeListener((buttonView, isChecked) -> {
             accessible = isChecked;
@@ -258,7 +264,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     protected void onResume() {
         super.onResume();
 //        if (!mGoogleApiClient.isConnected())
-            mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //            // TODO: Consider calling
 //            //    ActivityCompat#requestPermissions
@@ -383,6 +389,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         return closest;
     }
 
+    public void changeMarkersColor(int color) {
+        for (Marker m : mapMarkers) {
+            m.setIcon(BitmapDescriptorFactory.defaultMarker(color));
+        }
+    }
+
     public void showPath(List<LocationDataPoint> list) {
         Iterator<LocationDataPoint> iterator = list.iterator();
         LocationDataPoint prev = null;
@@ -391,7 +403,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(new LatLng(dest.getLatitude(), dest.getLongitude()));
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(200));
-            mMap.addMarker(markerOptions);
+            Marker m = mMap.addMarker(markerOptions);
+            mapMarkers.add(m);
             if (prev != null) {
                 PolylineOptions polylineOptions = new PolylineOptions()
                         .add(new LatLng(dest.getLatitude(), dest.getLongitude())) // Point A.
@@ -543,6 +556,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         popup.show();
     }
 
+    public void showColorsMenu(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.setOnMenuItemClickListener(this::onMenuItemClickColor);// to implement on click event on items of menu
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.colors_menu, popup.getMenu());
+        popup.show();
+    }
+
     @Override
     public void onClick(View v) {
         showMenu(v);
@@ -550,6 +571,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     public void onClick1(View v) {
         mMap.clear();
+        mapMarkers = new ArrayList<>();
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //            // TODO: Consider calling
 //            //    ActivityCompat#requestPermissions
@@ -612,6 +634,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         menu.show();
 
 
+    }
+
+    public void onClick3(View v) {
+        PopupMenu menu = new PopupMenu(this, v);
+        menu.setOnMenuItemClickListener(this::onMenuItemClickColor);// to implement on click event on items of menu
+        MenuInflater inflater = menu.getMenuInflater();
+        inflater.inflate(R.menu.colors_menu, menu.getMenu());
+        menu.show();
     }
 
     @Override
@@ -736,6 +766,39 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         int index = (item.getItemId() - Menu.FIRST);
         way = dijkstra.shortestPathOptimized(start, arr[index].label, accessible);
         showPath(way);
+        return true;
+    }
+
+    public boolean onMenuItemClickColor(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.blue:
+                changeMarkersColor(240);
+                break;
+            case R.id.red:
+                changeMarkersColor(0);
+                break;
+            case R.id.yellow:
+                changeMarkersColor(60);
+                break;
+            case R.id.green:
+                changeMarkersColor(120);
+                break;
+            case R.id.orange:
+                changeMarkersColor(30);
+                break;
+            case R.id.purple:
+                changeMarkersColor(270);
+                break;
+            case R.id.pink:
+                changeMarkersColor(315);
+                break;
+            case R.id.cyan:
+                changeMarkersColor(180);
+                break;
+            default:
+
+        }
         return true;
     }
 }
