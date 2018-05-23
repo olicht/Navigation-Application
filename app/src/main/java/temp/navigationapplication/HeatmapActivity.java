@@ -30,11 +30,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.internal.LinkedTreeMap;
@@ -45,13 +40,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import AlgoDS.ds.graph.Edge;
 import AlgoDS.ds.graph.WeightedGraph;
+
+import static temp.navigationapplication.MainActivity.locs;
 
 public class HeatmapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
@@ -63,7 +58,6 @@ public class HeatmapActivity extends FragmentActivity implements OnMapReadyCallb
     private WeightedGraph<LocationDataPoint> testGraph;
     private GoogleApiClient mGoogleApiClient;
     public static final String TAG = HeatmapActivity.class.getSimpleName();
-    private ArrayList<LocationDataPoint> locs = new ArrayList<>();
 
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -147,53 +141,26 @@ public class HeatmapActivity extends FragmentActivity implements OnMapReadyCallb
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
-        // Read from the database
-        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();//.child("locations");
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "Value is: " + value);
-            }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
 
     }
 
-    private void getLocations(Map<String, Object> locations) {
 
-        //iterate through each user, ignoring their UID
-        for (Map.Entry<String, Object> entry : locations.entrySet()) {
-
-            //Get user map
-            Map singleUser = (Map) entry.getValue();
-            //Get phone field and append to list
-            locs.add(new LocationDataPoint((double) singleUser.get("currentLongitude"), (double) singleUser.get("currentLatitude"), true));
-        }
-
-    }
 
     private void addHeatMap() {
 
         // Get the data: latitude/longitude positions of check-points (for now... a server is needed)
-        Set<LocationDataPoint> vertices = testGraph.getVertices();
-        ArrayList<LatLng> list = new ArrayList<>();
-        for (LocationDataPoint v : vertices) {
-            LatLng l = new LatLng(v.getLatitude(), v.getLongitude());
-            list.add(l);
-        }
+//        Set<LocationDataPoint> vertices = testGraph.getVertices();
+//        ArrayList<LatLng> list = new ArrayList<>();
+//        for (LocationDataPoint v : vertices) {
+//            LatLng l = new LatLng(v.getLatitude(), v.getLongitude());
+//            list.add(l);
+//        }
 
 
         // Create a heat map tile provider, passing it the latlngs of the police stations.
         HeatmapTileProvider mProvider = new HeatmapTileProvider.Builder()
-                .data(list)
+                .data(locs)
                 .build();
         // Add a tile overlay to the map, using the heat map tile provider.
         TileOverlay mOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
@@ -298,19 +265,19 @@ public class HeatmapActivity extends FragmentActivity implements OnMapReadyCallb
                 });
         buildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
-
-        JsonElement graphElement;
-        WeightedGraph<LocationDataPoint> TestGraph;
-        try {
-            graphElement = fileToJsonElement(getResources().openRawResource(R.raw.graph));
-            assert graphElement != null;
-            TestGraph = (WeightedGraph) jsonToObject(graphElement, WeightedGraph.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        testGraph = toRealGraph(TestGraph);
+//
+//        JsonElement graphElement;
+//        WeightedGraph<LocationDataPoint> TestGraph;
+//        try {
+//            graphElement = fileToJsonElement(getResources().openRawResource(R.raw.graph));
+//            assert graphElement != null;
+//            TestGraph = (WeightedGraph) jsonToObject(graphElement, WeightedGraph.class);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return;
+//        }
+//
+//        testGraph = toRealGraph(TestGraph);
 
         addHeatMap();
     }
