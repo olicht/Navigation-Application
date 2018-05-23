@@ -30,6 +30,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.internal.LinkedTreeMap;
@@ -42,6 +47,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import AlgoDS.ds.graph.Edge;
@@ -57,6 +63,8 @@ public class HeatmapActivity extends FragmentActivity implements OnMapReadyCallb
     private WeightedGraph<LocationDataPoint> testGraph;
     private GoogleApiClient mGoogleApiClient;
     public static final String TAG = HeatmapActivity.class.getSimpleName();
+    private ArrayList<LocationDataPoint> locs = new ArrayList<>();
+
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
@@ -138,6 +146,37 @@ public class HeatmapActivity extends FragmentActivity implements OnMapReadyCallb
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+
+        // Read from the database
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();//.child("locations");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                Log.d(TAG, "Value is: " + value);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+    }
+
+    private void getLocations(Map<String, Object> locations) {
+
+        //iterate through each user, ignoring their UID
+        for (Map.Entry<String, Object> entry : locations.entrySet()) {
+
+            //Get user map
+            Map singleUser = (Map) entry.getValue();
+            //Get phone field and append to list
+            locs.add(new LocationDataPoint((double) singleUser.get("currentLongitude"), (double) singleUser.get("currentLatitude"), true));
+        }
 
     }
 

@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //start sign in/up dialog
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -71,34 +72,17 @@ public class MainActivity extends AppCompatActivity
                     Toast.LENGTH_LONG)
                     .show();
 
+//            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("locations").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+//
+//            ref.on("value")
+//                    .then(function(snapshot) {
+//                var name = snapshot.child("name").val(); // {first:"Ada",last:"Lovelace"}
+//                var firstName = snapshot.child("name/first").val(); // "Ada"
+//                var lastName = snapshot.child("name").child("last").val(); // "Lovelace"
+//                var age = snapshot.child("age").val(); // null
+//            });
         }
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            //push current location
-                            FirebaseDatabase.getInstance()
-                                    .getReference()
-                                    .child("locations")
-                                    .push()
-                                    .setValue(new LocationMessage(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), location.getLatitude(), location.getLongitude()));
-                        }
-                    }
-                });
     }
 
     private void launchMapActivity() {
@@ -195,6 +179,32 @@ public class MainActivity extends AppCompatActivity
                         "Successfully signed in. Welcome!",
                         Toast.LENGTH_LONG)
                         .show();
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                mFusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                // Got last known location. In some rare situations this can be null.
+                                if (location != null) {
+                                    //push current location
+                                    FirebaseDatabase.getInstance()
+                                            .getReference()
+                                            .child("locations")
+                                            .child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
+                                            .push()
+                                            .setValue(new LocationMessage(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), location.getLatitude(), location.getLongitude()));
+                                }
+                            }
+                        });
             } else {
                 Toast.makeText(this,
                         "We couldn't sign you in. Please try again later.",
@@ -210,10 +220,19 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_sign_out) {
+
+            //delete the user's child in the DB
+            FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child("locations")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
+                    .removeValue();
+
             AuthUI.getInstance().signOut(this)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
+
                             Toast.makeText(MainActivity.this,
                                     "You have been signed out.",
                                     Toast.LENGTH_LONG)

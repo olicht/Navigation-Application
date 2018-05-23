@@ -8,6 +8,13 @@ class LocationMessage {
     public double currentLatitude;
     public double currentLongitude;
 
+    public LocationMessage(String messageUser, long messageTime, double currentLatitude, double currentLongitude) {
+        this.messageUser = messageUser;
+        this.messageTime = messageTime;
+        this.currentLatitude = currentLatitude;
+        this.currentLongitude = currentLongitude;
+    }
+
     public LocationMessage(String messageUser, double currentLatitude, double currentLongitude) {
         this.messageUser = messageUser;
         this.messageTime = messageTime = new Date().getTime();
