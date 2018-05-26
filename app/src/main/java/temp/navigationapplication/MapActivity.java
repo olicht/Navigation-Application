@@ -40,6 +40,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.internal.LinkedTreeMap;
@@ -51,6 +53,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -68,6 +71,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
+    //private FusedLocationProviderApi fusedLocationProviderApi = LocationServices.API;
 
     private WeightedGraph<LocationDataPoint> testGraph;
     private LocationDataPoint src; //last known location
@@ -122,24 +126,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     public void onConnected(@Nullable Bundle bundle) {
 
         Log.i(TAG, "Location services connected.");
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location == null) {
-            // Blank for a moment...
-        } else {
-            handleNewLocation(location);
-        }
-        ;
-
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //            // TODO: Consider calling
 //            //    ActivityCompat#requestPermissions
@@ -151,19 +137,56 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 //            return;
 //        }
 //        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//
 //        if (location == null) {
-//            mGoogleApiClient.connect();
-//            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this); //request it
+//            // Blank for a moment...
 //        } else {
 //            handleNewLocation(location);
 //        }
+//        ;
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+//        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//
+//        if (location == null) {
+////            mGoogleApiClient.connect();
+//        } else {
+//            handleNewLocation(location);
+//        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this); //request it
 
     }
 
     private void handleNewLocation(Location location) {
         Log.d(TAG, location.toString());
-        //TODO: send a message to a firebase database for the heatmap
+        //TODO: send a message to the firebase database for the heatmap
+        // TODO: change to UID
+        //removing the old and pushing the new current location - works only like that!! :(
+//        FirebaseDatabase.getInstance()
+//                .getReference()
+//                .child("locations")
+//                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+//                .removeValue();
+
+        Map<String, Object> locUpdates = new HashMap<>();
+        locUpdates.put("currentLongitude", location.getLongitude());
+        locUpdates.put("currentLatitude", location.getLatitude());
+        locUpdates.put("messageTime", new Date().getTime());
+
+
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .child("locations")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .updateChildren(locUpdates);
     }
 
     @Override
@@ -245,7 +268,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
+                .setInterval(3 * 1000)        // 3 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
         mBtGoBack = (Button) findViewById(R.id.go_back);
@@ -263,19 +286,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     @Override
     protected void onResume() {
         super.onResume();
-//        if (!mGoogleApiClient.isConnected())
-        mGoogleApiClient.connect();
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        if (mGoogleApiClient.isConnected()) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+        }
 
     }
 
@@ -283,8 +307,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     protected void onPause() {
         super.onPause();
         if (mGoogleApiClient.isConnected()) {
-//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
     }
 
@@ -535,7 +558,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                         }
                     }
                 });
-        buildGoogleApiClient();
+        if (mGoogleApiClient == null) {
+            buildGoogleApiClient();
+        }
         mMap.setMyLocationEnabled(true);
     }
 
@@ -545,7 +570,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        mGoogleApiClient.connect();
+//        mGoogleApiClient.connect();
     }
 
     public void showMenu(View v) {

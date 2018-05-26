@@ -34,6 +34,7 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this,
                     "Welcome " + FirebaseAuth.getInstance()
                             .getCurrentUser()
-                            .getDisplayName(),
+                            .getUid(),
                     Toast.LENGTH_LONG)
                     .show();
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -105,19 +106,24 @@ public class MainActivity extends AppCompatActivity
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 //removing the old and pushing the new current location - works only like that!! :(
-                                FirebaseDatabase.getInstance()
-                                        .getReference()
-                                        .child("locations")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
-                                        .removeValue();
+//                                FirebaseDatabase.getInstance()
+//                                        .getReference()
+//                                        .child("locations")
+//                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+//                                        .removeValue();
+
+                                Map<String, Object> locUpdates = new HashMap<>();
+                                locUpdates.put("currentLongitude", location.getLongitude());
+                                locUpdates.put("currentLatitude", location.getLatitude());
+                                locUpdates.put("messageTime", new Date().getTime());
 
                                 FirebaseDatabase.getInstance()
                                         .getReference()
                                         .child("locations")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
-                                        .push()
-                                        .setValue(new LocationMessage(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), location.getLatitude(), location.getLongitude()));
-
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .updateChildren(locUpdates);
+//                                        .push()
+//                                        .setValue(new LocationMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), location.getLatitude(), location.getLongitude()));
                             }
                         }
                     });
@@ -283,13 +289,18 @@ public class MainActivity extends AppCompatActivity
                             public void onSuccess(Location location) {
                                 // Got last known location. In some rare situations this can be null.
                                 if (location != null) {
+                                    Map<String, Object> locUpdates = new HashMap<>();
+                                    locUpdates.put("currentLongitude", location.getLongitude());
+                                    locUpdates.put("currentLatitude", location.getLatitude());
+                                    locUpdates.put("messageTime", new Date().getTime());
                                     //push current location
                                     FirebaseDatabase.getInstance()
                                             .getReference()
                                             .child("locations")
-                                            .child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
-                                            .push()
-                                            .setValue(new LocationMessage(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), location.getLatitude(), location.getLongitude()));
+                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .updateChildren(locUpdates);
+//                                            .push()
+//                                            .setValue(new LocationMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), location.getLatitude(), location.getLongitude()));
                                 }
                             }
                         });
@@ -313,7 +324,7 @@ public class MainActivity extends AppCompatActivity
             FirebaseDatabase.getInstance()
                     .getReference()
                     .child("locations")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .removeValue();
 
             AuthUI.getInstance().signOut(this)
