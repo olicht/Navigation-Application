@@ -135,16 +135,10 @@ public class MainActivity extends AppCompatActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                //getLocations((Map<String,Object>) dataSnapshot.getValue());
                 GenericTypeIndicator<HashMap<String, Object>> objectsGTypeInd = new GenericTypeIndicator<HashMap<String, Object>>() {
                 };
                 Map<String, Object> objectHashMap = dataSnapshot.getValue(objectsGTypeInd);
-                //ArrayList<HashMap<String, HashMap<String, String>>> objectArrayList = new ArrayList<HashMap<String, HashMap<String, String>>>(objectHashMap.values());
-//                for (Object object : objectHashMap.values())
-
                 for (Map.Entry<String, Object> entry : objectHashMap.entrySet()) {
-//                    HashMap<String, HashMap<String, Double>> h = (HashMap<String, HashMap<String, Double>>) entry.getValue();
-//                    for (Map.Entry<String, HashMap<String, Double>> entry1 : h.entrySet()) {
 
                     HashMap<String, Double> h1 = (HashMap<String, Double>) entry.getValue();
                         Double longitude = h1.get("currentLongitude");
