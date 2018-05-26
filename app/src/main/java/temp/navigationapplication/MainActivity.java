@@ -143,15 +143,15 @@ public class MainActivity extends AppCompatActivity
 //                for (Object object : objectHashMap.values())
 
                 for (Map.Entry<String, Object> entry : objectHashMap.entrySet()) {
-                    HashMap<String, HashMap<String, Double>> h = (HashMap<String, HashMap<String, Double>>) entry.getValue();
-                    for (Map.Entry<String, HashMap<String, Double>> entry1 : h.entrySet()) {
+//                    HashMap<String, HashMap<String, Double>> h = (HashMap<String, HashMap<String, Double>>) entry.getValue();
+//                    for (Map.Entry<String, HashMap<String, Double>> entry1 : h.entrySet()) {
 
-                        HashMap<String, Double> h1 = entry1.getValue();
+                    HashMap<String, Double> h1 = (HashMap<String, Double>) entry.getValue();
                         Double longitude = h1.get("currentLongitude");
                         Double latitude = h1.get("currentLatitude");
                         locs.add(new LatLng(latitude, longitude));
 
-                    }
+//                    }
                 }
             }
 
