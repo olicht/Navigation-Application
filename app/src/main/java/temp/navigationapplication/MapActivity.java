@@ -1,6 +1,8 @@
 package temp.navigationapplication;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -25,10 +27,15 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -39,7 +46,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
@@ -87,6 +96,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private ArrayList<Marker> mapMarkers = new ArrayList<>(); //holds all of the markers placed on the map!
+    protected static final int LOCATION_SETTINGS_REQUEST = 3;
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -270,6 +280,41 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(3 * 1000)        // 3 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+
+        //for the location turn on dialog
+        LocationSettingsRequest.Builder settingsBuilder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+        settingsBuilder.setAlwaysShow(true);
+
+        Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(this)
+                .checkLocationSettings(settingsBuilder.build());
+
+        result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
+            @Override
+            public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
+                try {
+                    LocationSettingsResponse response =
+                            task.getResult(ApiException.class);
+                } catch (ApiException ex) {
+                    switch (ex.getStatusCode()) {
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            try {
+                                ResolvableApiException resolvableApiException =
+                                        (ResolvableApiException) ex;
+                                resolvableApiException
+                                        .startResolutionForResult(MapActivity.this,
+                                                LOCATION_SETTINGS_REQUEST);
+                            } catch (IntentSender.SendIntentException e) {
+
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+
+                            break;
+                    }
+                }
+            }
+        });
 
         mBtGoBack = (Button) findViewById(R.id.go_back);
 
@@ -587,6 +632,36 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.colors_menu, popup.getMenu());
         popup.show();
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == LOCATION_SETTINGS_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                LocationDataPoint src1 = (LocationDataPoint) testGraph.getVertices().toArray()[0];
+
+                mFusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                // Got last known location. In some rare situations this can be null.
+                                src = src1;
+                                if (location != null) {
+                                    src = new LocationDataPoint(location.getLongitude(), location.getLatitude(), true);
+                                    LatLng start = new LatLng(src.getLatitude(), src.getLongitude());
+
+                                    //mMap.addMarker(new MarkerOptions().position(start).title("You are here"));
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(start));
+                                    mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
+                                }
+                            }
+                        });
+
+            }
+        }
     }
 
     @Override
