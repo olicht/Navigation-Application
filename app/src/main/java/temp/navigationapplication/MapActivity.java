@@ -86,7 +86,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private LocationDataPoint src; //last known location
     private HashMap<String, LocationDataPoint> checkPoints = new HashMap<>();
     private HashMap<String, LocationDataPoint> FoodPoints = new HashMap<>();
-    private boolean accessible;
+    private boolean accessible = false;
     private Button mBtGoBack;
 
     private static GoogleApiClient mGoogleApiClient;
@@ -176,15 +176,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     private void handleNewLocation(Location location) {
-        Log.d(TAG, location.toString());
-        //TODO: send a message to the firebase database for the heatmap
-        // TODO: change to UID
-        //removing the old and pushing the new current location - works only like that!! :(
-//        FirebaseDatabase.getInstance()
-//                .getReference()
-//                .child("locations")
-//                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-//                .removeValue();
 
         Map<String, Object> locUpdates = new HashMap<>();
         locUpdates.put("currentLongitude", location.getLongitude());
@@ -262,7 +253,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         Switch sw = (Switch) findViewById(R.id.switchButton);
         sw.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            accessible = isChecked;
+            this.accessible = isChecked;
         });
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -575,7 +566,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         JsonElement graphElement;
         WeightedGraph<LocationDataPoint> TestGraph;
         try {
-            graphElement = fileToJsonElement(getResources().openRawResource(R.raw.graph));
+            graphElement = fileToJsonElement(getResources().openRawResource(R.raw.graph2));
             assert graphElement != null;
             TestGraph = (WeightedGraph) jsonToObject(graphElement, WeightedGraph.class);
         } catch (IOException e) {

@@ -38,6 +38,8 @@ import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.internal.LinkedTreeMap;
@@ -48,7 +50,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import AlgoDS.ds.graph.Edge;
@@ -361,7 +366,17 @@ public class HeatmapActivity extends FragmentActivity implements OnMapReadyCallb
 
     private void handleNewLocation(Location location) {
 
-        //TODO: update the firebase database with a new locationMessage!!
+        Map<String, Object> locUpdates = new HashMap<>();
+        locUpdates.put("currentLongitude", location.getLongitude());
+        locUpdates.put("currentLatitude", location.getLatitude());
+        locUpdates.put("messageTime", new Date().getTime());
+
+
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .child("locations")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .updateChildren(locUpdates);
     }
 
     @Override
