@@ -3,20 +3,20 @@ package temp.navigationapplication;
 import java.util.Date;
 
 class LocationMessage {
-    private String messageUser;
+    private String messageUid;
     private long messageTime;
     public double currentLatitude;
     public double currentLongitude;
 
-    public LocationMessage(String messageUser, long messageTime, double currentLatitude, double currentLongitude) {
-        this.messageUser = messageUser;
+    public LocationMessage(String messageUid, long messageTime, double currentLatitude, double currentLongitude) {
+        this.messageUid = messageUid;
         this.messageTime = messageTime;
         this.currentLatitude = currentLatitude;
         this.currentLongitude = currentLongitude;
     }
 
-    public LocationMessage(String messageUser, double currentLatitude, double currentLongitude) {
-        this.messageUser = messageUser;
+    public LocationMessage(String messageUid, double currentLatitude, double currentLongitude) {
+        this.messageUid = messageUid;
         this.messageTime = messageTime = new Date().getTime();
         this.currentLatitude = currentLatitude;
         this.currentLongitude = currentLongitude;
@@ -26,12 +26,12 @@ class LocationMessage {
     public LocationMessage() {
     }
 
-    public String getMessageUser() {
-        return messageUser;
+    public String getmessageUid() {
+        return messageUid;
     }
 
-    public void setMessageUser(String messageUser) {
-        this.messageUser = messageUser;
+    public void setmessageUid(String messageUid) {
+        this.messageUid = messageUid;
     }
 
     public long getMessageTime() {

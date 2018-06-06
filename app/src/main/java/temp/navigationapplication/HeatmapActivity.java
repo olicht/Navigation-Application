@@ -50,6 +50,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,7 +60,7 @@ import java.util.Set;
 import AlgoDS.ds.graph.Edge;
 import AlgoDS.ds.graph.WeightedGraph;
 
-import static temp.navigationapplication.MainActivity.locs;
+import static temp.navigationapplication.MainActivity.locsMap;
 import static temp.navigationapplication.MapActivity.LOCATION_SETTINGS_REQUEST;
 
 public class HeatmapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -206,11 +207,14 @@ public class HeatmapActivity extends FragmentActivity implements OnMapReadyCallb
 
 
         // Create a heat map tile provider, passing it the latlngs of the police stations.
-        HeatmapTileProvider mProvider = new HeatmapTileProvider.Builder()
-                .data(locs)
-                .build();
-        // Add a tile overlay to the map, using the heat map tile provider.
-        TileOverlay mOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+        if (locsMap.size() > 0) {
+            ArrayList<LatLng> locs = new ArrayList<>(locsMap.values());
+            HeatmapTileProvider mProvider = new HeatmapTileProvider.Builder()
+                    .data(locs)
+                    .build();
+            // Add a tile overlay to the map, using the heat map tile provider.
+            TileOverlay mOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+        }
     }
 
 

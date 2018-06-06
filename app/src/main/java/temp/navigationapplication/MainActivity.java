@@ -35,7 +35,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +48,9 @@ public class MainActivity extends AppCompatActivity
 //        return locs;
 //    }
 
-    public static ArrayList<LatLng> locs = new ArrayList<>();
+    //    public static ArrayList<LatLng> locs = new ArrayList<>();
+    public static HashMap<String, LatLng> locsMap = new HashMap<>();
+
     private static final int LOCATION_REQUEST_CODE = 1;
 
     @Override
@@ -123,6 +124,7 @@ public class MainActivity extends AppCompatActivity
                                     locUpdates.put("currentLongitude", location.getLongitude());
                                     locUpdates.put("currentLatitude", location.getLatitude());
                                     locUpdates.put("messageTime", new Date().getTime());
+                                    locUpdates.put("messageUid", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                                     FirebaseDatabase.getInstance()
                                             .getReference()
@@ -152,7 +154,13 @@ public class MainActivity extends AppCompatActivity
                         HashMap<String, Double> h1 = (HashMap<String, Double>) entry.getValue();
                         Double longitude = h1.get("currentLongitude");
                         Double latitude = h1.get("currentLatitude");
-                        locs.add(new LatLng(latitude, longitude));
+//                        locs.add(new LatLng(latitude, longitude));
+                        if (locsMap.containsKey(FirebaseAuth.getInstance().getUid())) {
+                            locsMap.replace(FirebaseAuth.getInstance().getUid(), new LatLng(latitude, longitude));
+                        } else //the user does not exists
+                        {
+                            locsMap.put(FirebaseAuth.getInstance().getUid(), new LatLng(latitude, longitude));
+                        }
 
 //                    }
                     }
@@ -168,20 +176,20 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void getLocations(Map<String, Object> locations) {
-
-        //iterate through each user, ignoring their UID
-        for (Map.Entry<String, Object> entry : locations.entrySet()) {
-
-            //Get user map
-            Map singleUser = (Map) entry.getValue();
-            //Get phone field and append to list
-            locs.add(new LatLng((double) singleUser.get("currentLatitude"), (double) singleUser.get("currentLongitude")));
-
-            System.out.println(locs.toString());
-        }
-
-    }
+//    private void getLocations(Map<String, Object> locations) {
+//
+//        //iterate through each user, ignoring their UID
+//        for (Map.Entry<String, Object> entry : locations.entrySet()) {
+//
+//            //Get user map
+//            Map singleUser = (Map) entry.getValue();
+//            //Get phone field and append to list
+//            locs.add(new LatLng((double) singleUser.get("currentLatitude"), (double) singleUser.get("currentLongitude")));
+//
+//            System.out.println(locs.toString());
+//        }
+//
+//    }
 
     private void launchMapActivity() {
 
@@ -265,6 +273,7 @@ public class MainActivity extends AppCompatActivity
                                         locUpdates.put("currentLongitude", location.getLongitude());
                                         locUpdates.put("currentLatitude", location.getLatitude());
                                         locUpdates.put("messageTime", new Date().getTime());
+                                        locUpdates.put("messageUid", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                                         FirebaseDatabase.getInstance()
                                                 .getReference()
@@ -320,6 +329,8 @@ public class MainActivity extends AppCompatActivity
                                         locUpdates.put("currentLongitude", location.getLongitude());
                                         locUpdates.put("currentLatitude", location.getLatitude());
                                         locUpdates.put("messageTime", new Date().getTime());
+                                        locUpdates.put("messageUid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+
                                         //push current location
                                         FirebaseDatabase.getInstance()
                                                 .getReference()
