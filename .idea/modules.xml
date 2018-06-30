@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Navigation-Application.iml" filepath="$PROJECT_DIR$/Navigation-Application.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../../Home/StudioProjects/Navigation-Application2/Navigation-Application.iml" filepath="$PROJECT_DIR$/../../../../Home/StudioProjects/Navigation-Application2/Navigation-Application.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Navigation-Application2.iml" filepath="$PROJECT_DIR$/Navigation-Application2.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
