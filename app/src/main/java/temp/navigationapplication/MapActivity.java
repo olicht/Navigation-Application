@@ -13,6 +13,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -84,6 +85,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     private WeightedGraph<LocationDataPoint> testGraph;
     private LocationDataPoint src; //last known location
+    private LocationDataPoint destination; //current destination
     private HashMap<String, LocationDataPoint> checkPoints = new HashMap<>();
     private HashMap<String, LocationDataPoint> FoodPoints = new HashMap<>();
     private boolean accessible = false;
@@ -188,6 +190,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 .child("locations")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .updateChildren(locUpdates);
+
+        if(closestPoint(testGraph, new LocationDataPoint(location.getLongitude(), location.getLatitude(), true))==destination)
+            Toast.makeText(this, "הגעת ליעד!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -467,12 +472,16 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             if (prev != null) {
                 PolylineOptions polylineOptions = new PolylineOptions()
                         .add(new LatLng(dest.getLatitude(), dest.getLongitude())) // Point A.
-                        .add(new LatLng(prev.getLatitude(), prev.getLongitude()));// Point B.
+                        .add(new LatLng(prev.getLatitude(), prev.getLongitude())); // Point B.
                 Polyline polyline = mMap.addPolyline(polylineOptions);
             }
             prev = dest;
         }
 
+        if(accessible==true && list.size()==1)
+        {
+            Toast.makeText(this, "מצטערים, לא קיים מסלול נגיש ליעד.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static Bitmap drawableToBitmap(Drawable drawable) {
@@ -498,7 +507,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         return bitmap;
     }
 
-    public static WeightedGraph<LocationDataPoint> toRealGraph(WeightedGraph<LocationDataPoint> graph) {
+    public WeightedGraph<LocationDataPoint> toRealGraph(WeightedGraph<LocationDataPoint> graph) {
 
         Set<Edge<LocationDataPoint>> set = graph.getEdges();
         Set<Edge<LocationDataPoint>> realSet = new HashSet<>();
@@ -526,6 +535,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
             realGraph.addEdge(e);
         }
+
+        //adding two additional edges
+        LocationDataPoint lib = checkPoints.get("library");
+        LocationDataPoint edu = checkPoints.get("education");
+        LocationDataPoint jac = checkPoints.get("jacobs");
+        realGraph.addEdge(lib, edu , CalculateDistance.distanceBetween(lib.getLatitude(), lib.getLongitude(), edu.getLatitude(), edu.getLongitude())[0]);
+        realGraph.addEdge(lib, jac , CalculateDistance.distanceBetween(lib.getLatitude(), lib.getLongitude(), jac.getLatitude(), jac.getLongitude())[0]);
+
         return realGraph;
     }
 
@@ -745,102 +762,127 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         switch (item.getItemId()) {
             case R.id.hecht:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("hecht"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("hecht");
                 showPath(way);
                 return true;
             case R.id.eshkol:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("eshkol"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("eshkol");
                 showPath(way);
                 return true;
             case R.id.northParking:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("northParking"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("northParking");
                 showPath(way);
                 return true;
             case R.id.rabin:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("rabin"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("rabin");
                 showPath(way);
                 return true;
             case R.id.stairs:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("stairs"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("stairs");
                 showPath(way);
                 return true;
             case R.id.smell:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("smell"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("smell");
                 showPath(way);
                 return true;
             case R.id.academon:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("academon"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("academon");
                 showPath(way);
                 return true;
             case R.id.greg:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("greg"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("greg");
                 showPath(way);
                 return true;
             case R.id.food:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("food"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("food");
                 showPath(way);
                 return true;
             case R.id.studentHouse:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("studentHouse"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("studentHouse");
                 showPath(way);
                 return true;
             case R.id.jacobs:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("jacobs"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("jacobs");
                 showPath(way);
                 return true;
             case R.id.education:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("education"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("education");
                 showPath(way);
                 return true;
             case R.id.aguda:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("aguda"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("aguda");
                 showPath(way);
                 return true;
             case R.id.library:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("library"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("library");
                 showPath(way);
                 return true;
             case R.id.haias:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("haias"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("haias");
                 showPath(way);
                 return true;
             case R.id.meonot:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("meonot"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("meonot");
                 showPath(way);
                 return true;
             case R.id.sportRoom:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("sportRoom"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("sportRoom");
                 showPath(way);
                 return true;
             case R.id.tennis:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("tennis"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("tennis");
                 showPath(way);
                 return true;
             case R.id.multiPurpose:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("multiPurpose"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("multiPurpose");
                 showPath(way);
                 return true;
             case R.id.grass:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("grass"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("grass");
                 showPath(way);
                 return true;
             case R.id.parkingBridge:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("parkingBridge"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("parkingBridge");
                 showPath(way);
                 return true;
             case R.id.northEnter:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("northEntrance"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("northEntrance");
                 showPath(way);
                 return true;
             case R.id.pilpeplet:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("pilpeplet"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("pilpeplet");
                 showPath(way);
                 return true;
             case R.id.shopsRoad:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("shopsRoad"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("shopsRoad");
                 showPath(way);
                 return true;
             case R.id.educationParking:
                 way = dijkstra.shortestPathOptimized(start, checkPoints.get("educationParking"), accessible /*, checkPoints.get("hecht"), false*/);
+                destination = checkPoints.get("educationParking");
                 showPath(way);
                 return true;
             default:

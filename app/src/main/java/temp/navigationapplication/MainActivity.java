@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity
     public static HashMap<String, LatLng> locsMap = new HashMap<>();
 
     private static final int LOCATION_REQUEST_CODE = 1;
+    private static final int STOEAGER_REQUEST_CODE = 2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +95,22 @@ public class MainActivity extends AppCompatActivity
                             .getDisplayName(),
                     Toast.LENGTH_LONG)
                     .show();
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                // TODO: Consider calling
+//                //    ActivityCompat#requestPermissions
+//                // here to request the missing permissions, and then overriding
+//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                //                                          int[] grantResults)
+//                // to handle the case where the user grants the permission. See the documentation
+//                // for ActivityCompat#requestPermissions for more details.
+//                return;
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
+                        STOEAGER_REQUEST_CODE);
+
+            }
+
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //                // TODO: Consider calling
 //                //    ActivityCompat#requestPermissions
@@ -207,6 +225,11 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    private void launchScraperActivity() {
+        Intent intent = new Intent(this, ScraperActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -238,6 +261,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case (R.id.nav_slideshow):
                 launchChatActivity();
+                break;
+            case (R.id.nav_view):
+                launchScraperActivity();
                 break;
             default:
         }
@@ -290,6 +316,8 @@ public class MainActivity extends AppCompatActivity
                 }
                 return;
             }
+            case STOEAGER_REQUEST_CODE:
+
 
         }
     }
