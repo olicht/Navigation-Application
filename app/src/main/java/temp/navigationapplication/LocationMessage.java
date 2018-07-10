@@ -2,6 +2,7 @@ package temp.navigationapplication;
 
 import java.util.Date;
 
+// a class which represent a location message
 class LocationMessage {
     private String messageUid;
     private long messageTime;

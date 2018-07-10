@@ -2,6 +2,7 @@ package temp.navigationapplication;
 
 import java.util.Date;
 
+//a class which represents a message in the chat
 public class ChatMessage {
     private String messageUser;
     private long messageTime;

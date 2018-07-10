@@ -81,7 +81,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
-    //private FusedLocationProviderApi fusedLocationProviderApi = LocationServices.API;
 
     private WeightedGraph<LocationDataPoint> testGraph;
     private LocationDataPoint src; //last known location
@@ -128,8 +127,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 return;
             }
 
-            // other 'case' lines to check for other permissions this app might request.
-            //You can add here other case statements according to your requirement.
         }
     }
 
@@ -138,23 +135,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     public void onConnected(@Nullable Bundle bundle) {
 
         Log.i(TAG, "Location services connected.");
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//        if (location == null) {
-//            // Blank for a moment...
-//        } else {
-//            handleNewLocation(location);
-//        }
-//        ;
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -166,13 +146,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-//        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//
-//        if (location == null) {
-////            mGoogleApiClient.connect();
-//        } else {
-//            handleNewLocation(location);
-//        }
+
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this); //request it
 
     }
@@ -623,7 +597,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-//        mGoogleApiClient.connect();
     }
 
     public void showMenu(View v) {
@@ -680,31 +653,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     public void onClick1(View v) {
         mMap.clear();
         mapMarkers = new ArrayList<>();
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        mFusedLocationClient.getLastLocation()
-//                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-//                    @Override
-//                    public void onSuccess(Location location) {
-//                        // Got last known location. In some rare situations this can be null.
-//                        if (location != null) {
-//                            src = new LocationDataPoint(location.getLongitude(), location.getLatitude(), true);
-//                            LatLng start = new LatLng(src.getLatitude(), src.getLongitude());
-//
-//                            mMap.addMarker(new MarkerOptions().position(start).title("You are here"));
-//                            mMap.moveCamera(CameraUpdateFactory.newLatLng(start));
-//                            mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
-//                        }
-//                    }
-//                });
     }
 
     public void onClick2(View v) {

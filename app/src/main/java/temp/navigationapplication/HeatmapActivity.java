@@ -197,16 +197,7 @@ public class HeatmapActivity extends FragmentActivity implements OnMapReadyCallb
 
     private void addHeatMap() {
 
-        // Get the data: latitude/longitude positions of check-points (for now... a server is needed)
-//        Set<LocationDataPoint> vertices = testGraph.getVertices();
-//        ArrayList<LatLng> list = new ArrayList<>();
-//        for (LocationDataPoint v : vertices) {
-//            LatLng l = new LatLng(v.getLatitude(), v.getLongitude());
-//            list.add(l);
-//        }
-
-
-        // Create a heat map tile provider, passing it the latlngs of the police stations.
+        // Create a heat map tile provider
         if (locsMap.size() > 0) {
             ArrayList<LatLng> locs = new ArrayList<>(locsMap.values());
             HeatmapTileProvider mProvider = new HeatmapTileProvider.Builder()
@@ -316,19 +307,6 @@ public class HeatmapActivity extends FragmentActivity implements OnMapReadyCallb
                 });
         buildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
-//
-//        JsonElement graphElement;
-//        WeightedGraph<LocationDataPoint> TestGraph;
-//        try {
-//            graphElement = fileToJsonElement(getResources().openRawResource(R.raw.graph));
-//            assert graphElement != null;
-//            TestGraph = (WeightedGraph) jsonToObject(graphElement, WeightedGraph.class);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return;
-//        }
-//
-//        testGraph = toRealGraph(TestGraph);
 
         addHeatMap();
     }

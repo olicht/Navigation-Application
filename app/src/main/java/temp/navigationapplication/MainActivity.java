@@ -131,13 +131,7 @@ public class MainActivity extends AppCompatActivity
                             public void onSuccess(Location location) {
                                 // Got last known location. In some rare situations this can be null.
                                 if (location != null) {
-                                    //removing the old and pushing the new current location - works only like that!! :(
-//                                FirebaseDatabase.getInstance()
-//                                        .getReference()
-//                                        .child("locations")
-//                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-//                                        .removeValue();
-
+                                    //update the current user's location
                                     Map<String, Object> locUpdates = new HashMap<>();
                                     locUpdates.put("currentLongitude", location.getLongitude());
                                     locUpdates.put("currentLatitude", location.getLatitude());
@@ -149,8 +143,6 @@ public class MainActivity extends AppCompatActivity
                                             .child("locations")
                                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                             .updateChildren(locUpdates);
-//                                        .push()
-//                                        .setValue(new LocationMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), location.getLatitude(), location.getLongitude()));
                                 }
                             }
                         });
@@ -193,21 +185,6 @@ public class MainActivity extends AppCompatActivity
         });
 
     }
-
-//    private void getLocations(Map<String, Object> locations) {
-//
-//        //iterate through each user, ignoring their UID
-//        for (Map.Entry<String, Object> entry : locations.entrySet()) {
-//
-//            //Get user map
-//            Map singleUser = (Map) entry.getValue();
-//            //Get phone field and append to list
-//            locs.add(new LatLng((double) singleUser.get("currentLatitude"), (double) singleUser.get("currentLongitude")));
-//
-//            System.out.println(locs.toString());
-//        }
-//
-//    }
 
     private void launchMapActivity() {
 
@@ -288,13 +265,7 @@ public class MainActivity extends AppCompatActivity
                                 public void onSuccess(Location location) {
                                     // Got last known location. In some rare situations this can be null.
                                     if (location != null) {
-                                        //removing the old and pushing the new current location - works only like that!! :(
-//                                FirebaseDatabase.getInstance()
-//                                        .getReference()
-//                                        .child("locations")
-//                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-//                                        .removeValue();
-
+                                        //updating the user's current location
                                         Map<String, Object> locUpdates = new HashMap<>();
                                         locUpdates.put("currentLongitude", location.getLongitude());
                                         locUpdates.put("currentLatitude", location.getLatitude());
@@ -306,8 +277,6 @@ public class MainActivity extends AppCompatActivity
                                                 .child("locations")
                                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                                 .updateChildren(locUpdates);
-//                                        .push()
-//                                        .setValue(new LocationMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), location.getLatitude(), location.getLongitude()));
                                     }
                                 }
                             });
